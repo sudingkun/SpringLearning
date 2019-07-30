@@ -19,7 +19,7 @@
     </properties>
 
     <dependencies>
-        <!--分页插件-->
+        <!--分页插件,包含mybatis的依赖了-->
         <dependency>
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper-spring-boot-starter</artifactId>

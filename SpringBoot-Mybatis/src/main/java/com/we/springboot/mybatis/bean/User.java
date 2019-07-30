@@ -6,17 +6,25 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * @Author sudingkun
- * @create 2019/7/30 19:16
+ * @author sudingkun
  */
 @Data
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
+    /**
+     * 用户id
+     */
     private Integer id;
 
+    /**
+     * 用户姓名
+     */
     private String name;
 
+    /**
+     * 用户年龄
+     */
     private Integer age;
 }
