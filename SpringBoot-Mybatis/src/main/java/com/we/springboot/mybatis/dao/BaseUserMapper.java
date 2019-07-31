@@ -10,4 +10,5 @@ import tk.mybatis.mapper.common.MySqlMapper;
  */
 @Mapper
 public interface BaseUserMapper extends tk.mybatis.mapper.common.Mapper<User>, MySqlMapper<User> {
+
 }

@@ -1,6 +1,5 @@
 package com.we.springboot.mybatis;
 
-import com.github.pagehelper.PageHelper;
 import com.we.springboot.mybatis.bean.User;
 import com.we.springboot.mybatis.dao.BaseUserMapper;
 import org.apache.ibatis.session.RowBounds;
@@ -9,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,10 +84,9 @@ public class BaseUserMapperTest {
 
     @Test
     public void getByCondition() {
-        PageHelper.startPage(1, 2);
-        User user = new User();
-        user.setName("testMybatis3");
-        List<User> UserList = userMapper.select(user);
+        Example example = new Example(User.class);
+        example.createCriteria().andLike("name", "%test%").andGreaterThan("age", 18);
+        List<User> UserList = userMapper.selectByExample(example);
         System.out.println(UserList);
 
     }
