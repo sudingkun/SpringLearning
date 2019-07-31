@@ -2,13 +2,13 @@ package com.we.springboot.mybatis;
 
 import com.github.pagehelper.PageHelper;
 import com.we.springboot.mybatis.bean.User;
-import com.we.springboot.mybatis.dao.UserMapper;
+import com.we.springboot.mybatis.dao.UserAnnotationsMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,29 +21,31 @@ import java.util.List;
 @SpringBootTest
 public class MybatisApplicationTests {
 
-    //使用xml方式
-    @Resource
-    UserMapper userMapper;
+    /*//使用xml方式
+    @Autowired
+    UserMapper userMapper;*/
 
-   /* //使用注解方式
-    @Resource(name = "userAnnotationsMapper")
-    UserAnnotationsMapper userMapper;*/
+    //使用注解方式
+    @Autowired
+    UserAnnotationsMapper userMapper;
+
 
     @Test
     public void insert() {
-        User use = new User(1, "testMybatis", 20);
-        int result = userMapper.insert(use);
+        User user = new User(1, "testMybatis", 20);
+        int result = userMapper.insert(user);
         System.out.println(result);
     }
+
     @Test
     public void BatchInsert() {
-        User use1 = new User(1, "testMybatis1", 21);
-        User use2 = new User(2, "testMybatis2", 22);
-        User use3 = new User(3, "testMybatis3", 23);
+        User user1 = new User(1, "testMybatis1", 21);
+        User user2 = new User(2, "testMybatis2", 22);
+        User user3 = new User(3, "testMybatis3", 23);
         List<User> users = new ArrayList<>();
-        users.add(use1);
-        users.add(use2);
-        users.add(use3);
+        users.add(user1);
+        users.add(user2);
+        users.add(user3);
         int result = userMapper.batchInsert(users);
         System.out.println(result);
     }
@@ -57,37 +59,37 @@ public class MybatisApplicationTests {
 
     @Test
     public void getById() {
-        User use = userMapper.getById(1);
-        System.out.println(use);
+        User user = userMapper.getById(1);
+        System.out.println(user);
     }
 
     @Test
     public void getAll() {
-        List<User> UserList = userMapper.getAll();
-        System.out.println(UserList);
+        List<User> users = userMapper.getAll();
+        System.out.println(users);
     }
 
     @Test
     public void getByCondition() {
         PageHelper.startPage(1, 2);
-        User User = new User();
-        User.setName("tom");
-        List<User> UserList = userMapper.getByCondition(User);
-        System.out.println(UserList);
+        User user = new User();
+        user.setName("tom");
+        List<User> users = userMapper.getByCondition(user);
+        System.out.println(users);
 
     }
 
     @Test
     public void getByNameAndAgeBetween() {
-        List<User> UserList = userMapper.getByNameAndAgeBetween("tom", 1, 2);
-        System.out.println(UserList);
+        List<User> users = userMapper.getByNameAndAgeBetween("tom", 1, 2);
+        System.out.println(users);
 
     }
 
     @Test
     public void update() {
-        User User = new User(1, "mybatisTest", 20);
-        int result = userMapper.update(User);
+        User user = new User(1, "mybatisTest", 20);
+        int result = userMapper.update(user);
         System.out.println(result);
     }
 

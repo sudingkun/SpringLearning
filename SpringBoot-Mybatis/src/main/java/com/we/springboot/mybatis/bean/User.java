@@ -5,6 +5,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 /**
  * @author sudingkun
  */
@@ -15,7 +19,10 @@ import lombok.ToString;
 public class User {
     /**
      * 用户id
+     * 下面两个注解是在使用mybatis通用mapper加的
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     /**
@@ -27,4 +34,5 @@ public class User {
      * 用户年龄
      */
     private Integer age;
+
 }

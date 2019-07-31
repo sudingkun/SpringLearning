@@ -1,8 +1,12 @@
 spring:
   application:
     name: mybatis
-#数据库配置
+  #数据库配置
   datasource:
+    schema: classpath:db/schema-*.sql
+    continue-on-error: true
+    # 只会在第一次初始化执行
+    initialization-mode: never
     url: jdbc:mysql://47.106.95.195:3306/spring?useUnicode=true&characterEncoding=utf-8&useSSL=false
     username: root
     password: 123456
@@ -60,6 +64,8 @@ spring:
         stat:
           log-slow-sql: true
 
+
+
 # mybatis 配置
 mybatis:
   mapper-locations: classpath:mapper/*.xml
@@ -68,6 +74,13 @@ mybatis:
     #属性支持驼峰命名
     map-underscore-to-camel-case: true
     callSettersOnNulls: true
+
+# 通用 mapper 配置
+mapper:
+  not-empty: false
+  identity: mysql
+  mappers: com.we.springboot.mybatis.dao.BaseUserMapper
+
 
 # 分页配置
 pagehelper:
