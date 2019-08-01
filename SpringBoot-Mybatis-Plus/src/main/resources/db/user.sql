@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 31/07/2019 08:21:36
+ Date: 01/08/2019 21:20:31
 */
 
 SET NAMES utf8mb4;
@@ -25,18 +25,19 @@ CREATE TABLE `user`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户id',
   `name` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL COMMENT '用户姓名',
   `age` int(255) NULL DEFAULT NULL COMMENT '用户年龄',
+  `deleted` int(255) NULL DEFAULT 0 COMMENT '逻辑删除字段',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (2, 'tom', 11);
-INSERT INTO `user` VALUES (3, 'tom', 12);
-INSERT INTO `user` VALUES (4, 'test', 11);
-INSERT INTO `user` VALUES (5, 'testMybatis', 20);
-INSERT INTO `user` VALUES (6, 'testMybatis1', 21);
-INSERT INTO `user` VALUES (7, 'testMybatis2', 22);
-INSERT INTO `user` VALUES (8, 'testMybatis3', 23);
+INSERT INTO `user` VALUES (2, 'tom', 11, 0);
+INSERT INTO `user` VALUES (3, 'tom', 12, 0);
+INSERT INTO `user` VALUES (4, 'test', 11, 0);
+INSERT INTO `user` VALUES (5, 'testMybatis', 20, 0);
+INSERT INTO `user` VALUES (6, 'testMybatis1', 21, 0);
+INSERT INTO `user` VALUES (7, 'testMybatis2', 22, 0);
+INSERT INTO `user` VALUES (8, 'testMybatis3', 23, 0);
 
 SET FOREIGN_KEY_CHECKS = 1;

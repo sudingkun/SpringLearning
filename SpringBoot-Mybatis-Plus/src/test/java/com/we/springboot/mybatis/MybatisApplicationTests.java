@@ -31,7 +31,6 @@ public class MybatisApplicationTests {
         System.out.println(result);
     }
 
-
     @Test
     public void deleteById() {
         int result = userMapper.deleteById(11);
@@ -53,7 +52,7 @@ public class MybatisApplicationTests {
     @Test
     public void getByCondition() {
         QueryWrapper<User> queryWrapper = new QueryWrapper<User>().ge("age", 1);
-        Page<User> page = new Page<User>(1, 2);
+        Page<User> page = new Page<>(1, 2);
         IPage<User> userPage = userMapper.selectPage(page, queryWrapper);
         System.out.println(userPage.getRecords());
 

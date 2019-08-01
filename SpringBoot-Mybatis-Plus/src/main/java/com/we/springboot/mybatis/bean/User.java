@@ -2,7 +2,7 @@ package com.we.springboot.mybatis.bean;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import lombok.AllArgsConstructor;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -12,9 +12,14 @@ import lombok.ToString;
  */
 @Data
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor
 public class User {
+
+    public User(Integer id, String name, Integer age) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+    }
     /**
      * 用户id
      */
@@ -30,5 +35,12 @@ public class User {
      * 用户年龄
      */
     private Integer age;
+
+    /**
+     * 逻辑删除字段
+     */
+    @TableLogic
+    private Integer deleted;
+
 
 }
