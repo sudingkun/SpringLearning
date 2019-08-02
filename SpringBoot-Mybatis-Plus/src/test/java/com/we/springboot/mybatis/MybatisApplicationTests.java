@@ -25,6 +25,14 @@ public class MybatisApplicationTests {
 
 
     @Test
+    public void insertByARAndAutoFill() {
+        User user = new User();
+        user.setName("testARAndAutoFill");
+        boolean result = user.insert();
+        System.out.println(result);
+    }
+
+    @Test
     public void insert() {
         User user = new User(1, "testMybatis", 20);
         int result = userMapper.insert(user);
@@ -44,6 +52,13 @@ public class MybatisApplicationTests {
     }
 
     @Test
+    public void getByIdWithAR() {
+        User user = new User();
+        user = user.selectById(10);
+        System.out.println(user);
+    }
+
+    @Test
     public void getAll() {
         List<User> users = userMapper.selectList(null);
         System.out.println(users);
@@ -55,7 +70,6 @@ public class MybatisApplicationTests {
         Page<User> page = new Page<>(1, 2);
         IPage<User> userPage = userMapper.selectPage(page, queryWrapper);
         System.out.println(userPage.getRecords());
-
     }
 
     @Test
@@ -65,8 +79,15 @@ public class MybatisApplicationTests {
                 .between("age", 1, 10);
         List<User> users = userMapper.selectList(queryWrapper);
         System.out.println(users);
-
     }
+
+    @Test
+    public void getByAR() {
+        User user = new User().selectOne(new QueryWrapper<User>()
+                .like("name", "mybatis").eq("age", 10));
+        System.out.println(user);
+    }
+
 
     @Test
     public void update() {

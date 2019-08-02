@@ -50,7 +50,7 @@ public class MybatisPlusConfig {
     }
 
     /**
-     * 攻击 SQL 阻断解析器、加入解析链
+     * 防止全表更新(删除).
      */
     @Bean
     public SqlExplainInterceptor sqlExplainInterceptor() {
@@ -60,4 +60,6 @@ public class MybatisPlusConfig {
         sqlExplainInterceptor.setSqlParserList(sqlParserList);
         return sqlExplainInterceptor;
     }
+
+
 }

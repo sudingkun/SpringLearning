@@ -1,25 +1,31 @@
 package com.we.springboot.mybatis.bean;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 /**
  * @author sudingkun
+ * 开启AR模式需要继承Model
  */
+@TableName("user")
 @Data
+@EqualsAndHashCode(callSuper = true)
 @ToString
 @NoArgsConstructor
-public class User {
+@Accessors(chain = true)
+public class User extends Model<User> {
 
     public User(Integer id, String name, Integer age) {
         this.id = id;
         this.name = name;
         this.age = age;
     }
+
     /**
      * 用户id
      */
@@ -34,6 +40,7 @@ public class User {
     /**
      * 用户年龄
      */
+    @TableField(fill = FieldFill.INSERT)
     private Integer age;
 
     /**
