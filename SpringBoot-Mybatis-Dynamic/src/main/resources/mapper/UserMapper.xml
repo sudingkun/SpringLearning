@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.we.springboot.mybatis.dao.UserMapper">
+    
+    <resultMap id="BaseResultMap" type="user">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="age" property="age"/>
+    </resultMap>
+
+    <sql id="user">
+        id, `name`, age
+    </sql>
+
+    <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+        insert into user
+        (`name`, age)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.name}, #{item.age})
+        </foreach>
+    </insert>
+
+    <select id="getById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="user"/>
+        from user
+        where id = #{id}
+    </select>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete
+        from user
+        where id = #{id}
+    </delete>
+
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="user" useGeneratedKeys="true">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">`name`,</if>
+            <if test="age != null">age,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="age != null">#{age},</if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="user">
+        update user
+        <set>
+            <if test="name != null">`name` = #{name},</if>
+            <if test="age != null">age = #{age},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="getByCondition" resultMap="BaseResultMap">
+        select
+        <include refid="user"/>
+        from user
+        where 1=1
+        <if test="name != null and name != ''">
+            and `name` like concat('%',#{name} ,'%')
+        </if>
+        <if test="age != null and name != ''">
+            and `age` = #{age}
+        </if>
+    </select>
+
+    <select id="getAll" resultMap="BaseResultMap">
+        select
+        <include refid="user"/>
+        from user
+    </select>
+
+    <select id="getByNameAndAgeBetween" resultMap="BaseResultMap">
+        select
+        <include refid="user"/>
+        from user
+        where `name`=#{name} and age <![CDATA[>]]> #{minAge} and age <![CDATA[<]]> #{maxAge}
+    </select>
+
+</mapper>
