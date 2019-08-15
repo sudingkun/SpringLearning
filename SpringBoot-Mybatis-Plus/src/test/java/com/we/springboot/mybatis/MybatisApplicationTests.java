@@ -75,8 +75,8 @@ public class MybatisApplicationTests {
     @Test
     public void getByNameAndAgeBetween() {
         PageHelper.startPage(1, 2).setOrderBy("id");
-        QueryWrapper<User> queryWrapper = new QueryWrapper<User>().like("name", "tom")
-                .between("age", 1, 10);
+        QueryWrapper<User> queryWrapper = new QueryWrapper<User>().like("name", "test")
+                .between("age", 1, 20);
         List<User> users = userMapper.selectList(queryWrapper);
         System.out.println(users);
     }
