@@ -7,6 +7,7 @@ import com.we.datasource.dynamic.mapper.EmployeeMapper;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Author admin
@@ -20,4 +21,9 @@ public class EmployeeService extends ServiceImpl<EmployeeMapper, Employee> {
         return super.getById(id);
     }
 
+    @DS("slave")
+    @Override
+    public List<Employee> list() {
+        return super.list();
+    }
 }
