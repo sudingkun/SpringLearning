@@ -1,7 +1,4 @@
-### SpringBoot 整合 MyBatis
+### SpringBoot 整合 MyBatis 多数据源
 
-分别使用了注解和xml
-
-- UserAnnotationsMapper(注解版)
-- UserMapper(xml版)
+使用 dynamic-datasource-spring-boot-starter 进行整合
 

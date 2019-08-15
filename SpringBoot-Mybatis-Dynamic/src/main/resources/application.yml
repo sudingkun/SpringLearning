@@ -1,6 +1,6 @@
 spring:
   application:
-    name: mybatis
+    name: mybatis dynamic
   #数据库配置
   datasource:
     druid:
@@ -65,7 +65,7 @@ spring:
           username: root
           password: 123456
           driver-class-name: com.mysql.jdbc.Driver
-          schema: db/schema-user-master.sql
+#          schema: db/schema-user-master.sql
           url: jdbc:mysql://47.106.95.195:3306/dynamic_master?useUnicode=true&characterEncoding=utf-8&useSSL=false
           druid:
             initial-size: 6
@@ -75,7 +75,7 @@ spring:
           username: root
           password: 123456
           driver-class-name: com.mysql.jdbc.Driver
-          schema: db/schema-user-slave_1.sql
+#          schema: db/schema-user-slave_1.sql
           url: jdbc:mysql://47.106.95.195:3306/dynamic_slave_1?useUnicode=true&characterEncoding=utf-8&useSSL=false
           druid:
             initial-size: 5
@@ -85,7 +85,7 @@ spring:
           username: root
           password: 123456
           driver-class-name: com.mysql.jdbc.Driver
-          schema: db/schema-user-slave_2.sql
+#          schema: db/schema-user-slave_2.sql
           url: jdbc:mysql://47.106.95.195:3306/dynamic_slave_2?useUnicode=true&characterEncoding=utf-8&useSSL=false
 
 

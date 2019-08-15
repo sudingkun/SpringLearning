@@ -72,7 +72,7 @@ public class MybatisApplicationTests {
     public void getByCondition() {
         PageHelper.startPage(1, 2);
         User user = new User();
-        user.setName("tom");
+        user.setName("test");
         List<User> users = userMapper.getByCondition(user);
         System.out.println(users);
 
