@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
+ * config和 handler包底下的mybatis plus配置(不是必须配置的)
  * @author sudingkun
  */
 @SpringBootApplication(exclude = DruidDataSourceAutoConfigure.class)
