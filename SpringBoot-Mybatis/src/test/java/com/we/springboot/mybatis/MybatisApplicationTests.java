@@ -2,7 +2,7 @@ package com.we.springboot.mybatis;
 
 import com.github.pagehelper.PageHelper;
 import com.we.springboot.mybatis.bean.User;
-import com.we.springboot.mybatis.dao.UserAnnotationsMapper;
+import com.we.springboot.mybatis.dao.UserMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +21,13 @@ import java.util.List;
 @SpringBootTest
 public class MybatisApplicationTests {
 
-    /*//使用xml方式
+    //使用xml方式
     @Autowired
-    UserMapper userMapper;*/
+    UserMapper userMapper;
 
-    //使用注解方式
+    /*//使用注解方式
     @Autowired
-    UserAnnotationsMapper userMapper;
+    UserAnnotationsMapper userMapper;*/
 
 
     @Test
@@ -73,7 +73,7 @@ public class MybatisApplicationTests {
     public void getByCondition() {
         PageHelper.startPage(1, 2);
         User user = new User();
-        user.setName("tom");
+        user.setName("test");
         List<User> users = userMapper.getByCondition(user);
         System.out.println(users);
 
@@ -81,7 +81,7 @@ public class MybatisApplicationTests {
 
     @Test
     public void getByNameAndAgeBetween() {
-        List<User> users = userMapper.getByNameAndAgeBetween("tom", 1, 2);
+        List<User> users = userMapper.getByNameAndAgeBetween("test", 1, 20);
         System.out.println(users);
 
     }

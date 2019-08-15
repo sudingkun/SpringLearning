@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.we.springboot.mybatis.dao.UserMapper">
-    
+
     <resultMap id="BaseResultMap" type="user">
         <id column="id" property="id"/>
         <result column="name" property="name"/>
@@ -9,7 +9,9 @@
     </resultMap>
 
     <sql id="user">
-        id, `name`, age
+            id,
+            `name`,
+            age
     </sql>
 
     <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
@@ -78,7 +80,11 @@
         select
         <include refid="user"/>
         from user
-        where `name`=#{name} and age <![CDATA[>]]> #{minAge} and age <![CDATA[<]]> #{maxAge}
+        where
+        <if test="name != null and name != ''">
+            `name` like concat('%',#{name} ,'%') and
+        </if>
+        age <![CDATA[>]]> #{minAge} and age <![CDATA[<]]> #{maxAge}
     </select>
 
 </mapper>
