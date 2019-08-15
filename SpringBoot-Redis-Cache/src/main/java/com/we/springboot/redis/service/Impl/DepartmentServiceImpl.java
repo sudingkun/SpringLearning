@@ -33,7 +33,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    @Cacheable(cacheNames = "depts", unless = "#result == null")
+    @Cacheable(keyGenerator = "keyGenerator",cacheNames = "depts", unless = "#result == null")
     public List<Department> findAll() {
         System.out.println("findAll");
         return departmentRepository.findAll();
