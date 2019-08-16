@@ -7,6 +7,10 @@ import com.we.springboot.redis.utils.ResultUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("dept")
@@ -39,6 +43,25 @@ public class DepartmentController {
     @PutMapping("update")
     public ResultDataObject update(@RequestBody Department department) {
         return ResultUtil.success(departmentService.update(department));
+    }
+
+
+    @GetMapping("setSession")
+    @ResponseBody
+    public Department setRedisSession(HttpServletRequest request) {
+        Department department = new Department();
+        department.setId(66);
+        department.setDepartmentName("test");
+        request.getSession().setAttribute("dept", department);
+        return department;
+    }
+
+    @GetMapping("getSession")
+    public Map getRedisSession(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("sessionId", request.getSession().getId());
+        map.put("message", request.getSession().getAttribute("dept"));
+        return map;
     }
 
 
