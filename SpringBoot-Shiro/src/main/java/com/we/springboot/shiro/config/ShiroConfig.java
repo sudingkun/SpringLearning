@@ -15,9 +15,11 @@ import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreato
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author: sudingkun
@@ -55,6 +57,18 @@ public class ShiroConfig {
         return securityManager;
     }
 
+    /**
+     * 处理未授权方式有2种
+     * 1、使用 filterChainDefinitionMap.put("/add", "roles[admin]");
+     * 没有使用注解方式 @RequiresRoles(value = {"admin"})
+     * 设置 shiroFilterFactoryBean.setUnauthorizedUrl("/unauthorized"); unauthorized 是url
+     * 2、使用注解方式。则设置shiroFilterFactoryBean.setUnauthorizedUrl("/unauthorized");无效
+     *
+     * @see <a href="https://www.jianshu.com/p/e03f5b54838c">无效原因</a>
+     * 解决方法：
+     * 1、配置 {@link ShiroConfig#simpleMappingExceptionResolver()}
+     * 2、设置一个全局异常处理器
+     */
     @Bean
     public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
@@ -77,14 +91,29 @@ public class ShiroConfig {
         // 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
         shiroFilterFactoryBean.setLoginUrl("/toLogin");
         // 登录成功后要跳转的链接
-//        shiroFilterFactoryBean.setSuccessUrl("/index");
-        //未授权界面;
-//        shiroFilterFactoryBean.setUnauthorizedUrl("/unauthorized");
+        //shiroFilterFactoryBean.setSuccessUrl("/index");
+        //未授权界面
+        //shiroFilterFactoryBean.setUnauthorizedUrl("/unauthorized");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
 
         return shiroFilterFactoryBean;
     }
+
+    /**
+     * 处理未授权时抛出的异常
+     */
+    @Bean
+    public SimpleMappingExceptionResolver simpleMappingExceptionResolver() {
+        SimpleMappingExceptionResolver simpleMappingExceptionResolver = new SimpleMappingExceptionResolver();
+        Properties properties = new Properties();
+        //这里的 /unauthorized 是页面，不是访问的路径
+        properties.setProperty("org.apache.shiro.authz.UnauthorizedException", "/unauthorized");
+        simpleMappingExceptionResolver.setExceptionMappings(properties);
+        return simpleMappingExceptionResolver;
+    }
+
+    /*shiro开启注解支持*/
 
     /**
      * 配置Shiro生命周期处理器

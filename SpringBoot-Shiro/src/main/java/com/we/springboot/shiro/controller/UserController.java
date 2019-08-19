@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class UserController {
 
-    @GetMapping("toLogin")
+    @GetMapping({"toLogin","/"})
     public String login() {
         System.out.println("toLogin");
         return "login";
@@ -57,7 +57,7 @@ public class UserController {
         return "index";
     }
 
-    @RequiresRoles(value = {"admin", "root"}, logical = Logical.OR)
+    @RequiresRoles(value = {"admin", "superAdmin"}, logical = Logical.OR)
     @GetMapping("add")
     public String add(Model model) {
         model.addAttribute("value", "新增用户");
