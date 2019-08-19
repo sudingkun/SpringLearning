@@ -5,16 +5,17 @@ import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.spring.LifecycleBeanPostProcessor;
+import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -36,14 +37,13 @@ public class ShiroConfig {
         hashedCredentialsMatcher.setHashAlgorithmName("md5");
         // 设置散列次数： 意为加密几次
         hashedCredentialsMatcher.setHashIterations(2);
-        hashedCredentialsMatcher.setStoredCredentialsHexEncoded(true);
         return hashedCredentialsMatcher;
     }
 
     @Bean
     public Realm realm() {
         MyRealm realm = new MyRealm();
-//        realm.setCredentialsMatcher(hashedCredentialsMatcher());
+        realm.setCredentialsMatcher(hashedCredentialsMatcher());
         return realm;
     }
 
@@ -87,10 +87,43 @@ public class ShiroConfig {
     }
 
     /**
-     * cookie对象;会话Cookie模板 ,默认为: JSESSIONID 问题: 与SERVLET容器名冲突,重新定义为sid或rememberMe，自定义
+     * 配置Shiro生命周期处理器
+     * todo 不知道这个是干什么的
+     */
+    @Bean
+    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+        return new LifecycleBeanPostProcessor();
+    }
+
+    /**
+     * 没有这个，注解版的授权不起作用
+     */
+    @Bean
+    @DependsOn({"lifecycleBeanPostProcessor"})
+    public DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator() {
+        DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
+        advisorAutoProxyCreator.setProxyTargetClass(true);
+        return advisorAutoProxyCreator;
+    }
+
+    /**
+     * 开启shiro 注解模式
+     * 可以在controller中的方法前加上注解
+     * 如 @RequiresPermissions("userInfo:add")
+     */
+    @Bean
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {
+        AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
+        authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
+        return authorizationAttributeSourceAdvisor;
+    }
+
+
+    /*配置rememberMe*/
+
+
+    /**
      * rememberMe cookie 效果是重开浏览器后无需重新登录
-     *
-     * @return
      */
     @Bean
     public SimpleCookie rememberMeCookie() {
@@ -104,23 +137,19 @@ public class ShiroConfig {
     }
 
     /**
-     * 下面的配置应该没什么问题
-     * todo 把cookie加密密钥搞清楚
+     * rememberMe cookie加密的密钥，通过以下代码可以获取
+     * KeyGenerator keygen = KeyGenerator.getInstance("AES");
+     * SecretKey key = keygen.generateKey();
+     * String cipherKey = Base64.encodeToString(key.getEncoded());
+     * or
+     * String cipherKey = "QAZWSXEDCRFVTGBN".getBytes();
      *
-     * @return
+     * @see <a href="https://www.jianshu.com/p/960e5a23a523"/>可以看这篇文章</a>
      */
     @Bean
     public CookieRememberMeManager rememberMeManager() {
         CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
         cookieRememberMeManager.setCookie(rememberMeCookie());
-
-        //rememberme cookie加密的密钥 建议每个项目都不一样 默认AES算法 密钥长度（128 256 512 位），通过以下代码可以获取
-//        KeyGenerator keygen = KeyGenerator.getInstance("AES");
-//        SecretKey key = keygen.generateKey();
-//        String cipherKey = Base64.encodeToString(key.getEncoded());
-//        cookieRememberMeManager.setCipherKey(Base64.decode(cipherKey));
-
-// or       cookieRememberMeManager.setCipherKey("QAZWSXEDCRFVTGBN".getBytes());
         cookieRememberMeManager.setCipherKey(Base64.decode("TGMPe7lGO/Gbr38QiJu1/w=="));
         return cookieRememberMeManager;
     }

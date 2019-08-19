@@ -5,13 +5,12 @@
     <id column="id" property="id" />
     <result column="username" property="username" />
     <result column="password" property="password" />
-    <result column="created" property="created" />
-    <result column="updated" property="updated" />
+    <result column="salt" property="salt" />
   </resultMap>
 
 
     <sql id="user">
-        id,username,`password`,created,updated
+        id,username,`password`,salt
     </sql>
 
   <select id="findByUsername" resultMap="BaseResultMap">
