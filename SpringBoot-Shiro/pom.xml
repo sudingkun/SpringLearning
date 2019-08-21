@@ -29,12 +29,13 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <dependency>
+        <!--与shiro redis 整合冲突-->
+        <!--<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -56,18 +57,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-spring</artifactId>
-            <version>1.4.0</version>
-        </dependency>
-        <!-- shiro-thymeleaf 2.0.0-->
-        <dependency>
-            <groupId>com.github.theborakompanioni</groupId>
-            <artifactId>thymeleaf-extras-shiro</artifactId>
-            <version>2.0.0</version>
-        </dependency>
-
         <!-- mybatis plus -->
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -75,16 +64,42 @@
             <version>3.1.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring</artifactId>
+            <version>1.4.1</version>
+        </dependency>
+
+        <!-- shiro-redis -->
+         <dependency>
+             <groupId>org.crazycake</groupId>
+             <artifactId>shiro-redis</artifactId>
+             <version>3.2.3</version>
+         </dependency>
+
+        <!-- <dependency>
+             <groupId>org.springframework.data</groupId>
+             <artifactId>spring-data-redis</artifactId>
+             <version>2.1.10.RELEASE</version>
+         </dependency>-->
+
+        <!-- shiro-thymeleaf 2.0.0-->
         <!--<dependency>
-    <groupId>org.mybatis.spring.boot</groupId>
-    <artifactId>mybatis-spring-boot-starter</artifactId>
-    <version>2.1.0</version>
-</dependency>-->
+            <groupId>com.github.theborakompanioni</groupId>
+            <artifactId>thymeleaf-extras-shiro</artifactId>
+            <version>2.0.0</version>
+        </dependency>-->
+
 
         <!--    <dependency>
                 <groupId>org.crazycake</groupId>
                 <artifactId>shiro-redis-spring-boot-starter</artifactId>
                 <version>3.2.1</version>
+                <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+            <version>2.1.10.RELEASE</version>
+        </dependency>
             </dependency>-->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -96,6 +111,19 @@
             <artifactId>guava</artifactId>
             <version>28.0-jre</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.45</version>
+        </dependency>
+
+        <!--到时候换成使用starter-->
+        <!--<dependency>
+            <groupId>org.crazycake</groupId>
+            <artifactId>shiro-redis-spring-boot-starter</artifactId>
+            <version>3.2.1</version>
+        </dependency>-->
 
     </dependencies>
 

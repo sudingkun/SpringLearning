@@ -11,6 +11,18 @@ spring:
   thymeleaf:
     cache: false
 
+  redis:
+    host: 47.106.95.195
+    database: 15
+    port: 6379
+    timeout: 10000
+    jedis:
+      pool:
+        max-active: 7
+        max-wait: -1
+        max-idle: 7
+        min-idle: 0
+
 # mybatis plus配置
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
@@ -19,3 +31,4 @@ mybatis-plus:
     map-underscore-to-camel-case: true #属性支持驼峰命名
     callSettersOnNulls: true
     cache-enabled: false
+

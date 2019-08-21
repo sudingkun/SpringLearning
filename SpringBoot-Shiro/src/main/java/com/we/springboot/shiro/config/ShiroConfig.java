@@ -11,6 +11,9 @@ import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
+import org.crazycake.shiro.RedisCacheManager;
+import org.crazycake.shiro.RedisManager;
+import org.crazycake.shiro.serializer.StringSerializer;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,6 +57,7 @@ public class ShiroConfig {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(realm);
         securityManager.setRememberMeManager(rememberMeManager());
+        securityManager.setCacheManager(cacheManager());
         return securityManager;
     }
 
@@ -99,6 +103,28 @@ public class ShiroConfig {
 
         return shiroFilterFactoryBean;
     }
+
+    /*Shiro中使用redis*/
+
+    /**
+     * 获取用户角色权限的时候会把信息存储到redis中
+     * todo 把这些配置从配置文件中读进来
+     */
+    @Bean
+    public RedisManager redisManager() {
+        RedisManager redisManager = new RedisManager();
+        redisManager.setHost("47.106.95.195:6379");
+        redisManager.setDatabase(15);
+        return redisManager;
+    }
+
+    @Bean
+    public RedisCacheManager cacheManager() {
+        RedisCacheManager redisCacheManager = new RedisCacheManager();
+        redisCacheManager.setRedisManager(redisManager());
+        return redisCacheManager;
+    }
+
 
     /**
      * 处理未授权时抛出的异常
