@@ -1,6 +1,7 @@
 package com.we.springboot.shiro.config;
 
 import com.we.springboot.shiro.realm.MyRealm;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.mgt.SecurityManager;
@@ -13,13 +14,14 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.crazycake.shiro.RedisCacheManager;
 import org.crazycake.shiro.RedisManager;
-import org.crazycake.shiro.serializer.StringSerializer;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
+import javax.annotation.Resource;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -31,6 +33,8 @@ import java.util.Properties;
 @Configuration
 public class ShiroConfig {
 
+    @Resource
+    private RedisProperties redisProperties;
 
     /**
      * 凭证匹配器
@@ -78,51 +82,31 @@ public class ShiroConfig {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
 
-
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
         //配置退出 过滤器,其中的具体的退出代码Shiro已经替我们实现了
         filterChainDefinitionMap.put("/logout", "logout");
         filterChainDefinitionMap.put("/favicon.ico", "anon");
         filterChainDefinitionMap.put("/css/**", "anon");
         filterChainDefinitionMap.put("/js/**", "anon");
-//        filterChainDefinitionMap.put("/fonts/**", "anon");
-//        filterChainDefinitionMap.put("/img/**", "anon");
+        filterChainDefinitionMap.put("/fonts/**", "anon");
+        filterChainDefinitionMap.put("/img/**", "anon");
+        //如果有配置druid需要加上下面这个
         //filterChainDefinitionMap.put("/druid/**", "anon");
         filterChainDefinitionMap.put("/login", "anon");
-//        filterChainDefinitionMap.put("/**", "authc"); 设置了remember 就改成下面的
+        //filterChainDefinitionMap.put("/**", "authc"); 设置了remember 就改成下面的
         filterChainDefinitionMap.put("/**", "user");
 
         // 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
         shiroFilterFactoryBean.setLoginUrl("/toLogin");
         // 登录成功后要跳转的链接
         //shiroFilterFactoryBean.setSuccessUrl("/index");
+
         //未授权界面
         //shiroFilterFactoryBean.setUnauthorizedUrl("/unauthorized");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
 
         return shiroFilterFactoryBean;
-    }
-
-    /*Shiro中使用redis*/
-
-    /**
-     * 获取用户角色权限的时候会把信息存储到redis中
-     * todo 把这些配置从配置文件中读进来
-     */
-    @Bean
-    public RedisManager redisManager() {
-        RedisManager redisManager = new RedisManager();
-        redisManager.setHost("47.106.95.195:6379");
-        redisManager.setDatabase(15);
-        return redisManager;
-    }
-
-    @Bean
-    public RedisCacheManager cacheManager() {
-        RedisCacheManager redisCacheManager = new RedisCacheManager();
-        redisCacheManager.setRedisManager(redisManager());
-        return redisCacheManager;
     }
 
 
@@ -139,14 +123,43 @@ public class ShiroConfig {
         return simpleMappingExceptionResolver;
     }
 
+    /*Shiro中使用redis*/
+
+    /**
+     * 获取用户角色权限的时候会把信息存储到redis中
+     * todo 用下面的方法设置jedisPool，感觉怪怪的，有空再去看看
+     * redisManager.setJedisPool(new JedisPool(jedisConnectionFactory.getPoolConfig(), redisProperties.getHost()));
+     */
+    @Bean
+    public RedisManager redisManager() {
+        RedisManager redisManager = new RedisManager();
+        redisManager.setHost(redisProperties.getHost() + ":" + redisProperties.getPort());
+        redisManager.setDatabase(redisProperties.getDatabase());
+        redisManager.setTimeout((int) redisProperties.getTimeout().toMillis());
+        if (StringUtils.isNotBlank(redisProperties.getPassword())) {
+            redisManager.setPassword(redisProperties.getPassword());
+        }
+        return redisManager;
+    }
+
+    @Bean
+    public RedisCacheManager cacheManager() {
+        RedisCacheManager redisCacheManager = new RedisCacheManager();
+        redisCacheManager.setRedisManager(redisManager());
+        redisCacheManager.setValueSerializer(new MyRedisSerializer());
+        return redisCacheManager;
+    }
+
     /*shiro开启注解支持*/
 
     /**
-     * 配置Shiro生命周期处理器
      * todo 不知道这个是干什么的
+     * 配置Shiro生命周期处理器
+     *
+     * @see <a href="https://blog.csdn.net/qq_27324761/article/details/81559772">为什么下面的要用static</>
      */
     @Bean
-    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+    public static LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
     }
 
@@ -173,9 +186,7 @@ public class ShiroConfig {
         return authorizationAttributeSourceAdvisor;
     }
 
-
     /*配置rememberMe*/
-
 
     /**
      * rememberMe cookie 效果是重开浏览器后无需重新登录

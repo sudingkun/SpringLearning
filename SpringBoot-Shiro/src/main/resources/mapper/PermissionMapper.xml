@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.we.springboot.shiro.dao.PermissionMapper">
+    <resultMap id="BaseResultMap" type="com.we.springboot.shiro.bean.Permission">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="name" property="name"/>
+        <result column="enname" property="enname"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+            id,
+            parent_id,
+            `name`,
+            enname
+    </sql>
+
+    <select id="findByUserName" resultMap="BaseResultMap">
+        select p.id,p.name,p.enname,p.url
+        from shiro_permission p
+        left join shiro_role_permission rp
+        on p.id=rp.permission_id
+        left join shiro_user_role ur
+        on rp.role_id=ur.role_id
+        left join shiro_user u
+        on ur.user_id=u.id
+        where u.username=#{username}
+    </select>
+</mapper>

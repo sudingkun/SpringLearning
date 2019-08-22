@@ -9,6 +9,7 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class UserController {
 
-    @GetMapping({"toLogin","/"})
+    @GetMapping({"toLogin", "/"})
     public String login() {
         System.out.println("toLogin");
         return "login";
@@ -57,10 +58,24 @@ public class UserController {
         return "index";
     }
 
-    @RequiresRoles(value = {"admin", "superAdmin"}, logical = Logical.OR)
+    @RequiresPermissions(value = {"all", "add"}, logical = Logical.OR)
     @GetMapping("add")
     public String add(Model model) {
         model.addAttribute("value", "新增用户");
+        return "user";
+    }
+
+    @RequiresPermissions(value = "all")
+    @GetMapping("delete")
+    public String delete(Model model) {
+        model.addAttribute("value", "删除用户");
+        return "user";
+    }
+
+    @RequiresRoles(value = {"admin", "root"}, logical = Logical.OR)
+    @GetMapping("list")
+    public String list(Model model) {
+        model.addAttribute("value", "查询用户");
         return "user";
     }
 

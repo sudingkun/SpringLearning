@@ -1,7 +1,9 @@
 package com.we.springboot.shiro.realm;
 
+import com.we.springboot.shiro.bean.Permission;
 import com.we.springboot.shiro.bean.Role;
 import com.we.springboot.shiro.bean.User;
+import com.we.springboot.shiro.dao.PermissionMapper;
 import com.we.springboot.shiro.dao.RoleMapper;
 import com.we.springboot.shiro.dao.UserMapper;
 import org.apache.shiro.SecurityUtils;
@@ -11,6 +13,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
+import org.springframework.context.annotation.Lazy;
 
 import javax.annotation.Resource;
 import java.util.HashSet;
@@ -23,11 +26,16 @@ import java.util.Set;
 public class MyRealm extends AuthorizingRealm {
 
     @Resource
+    @Lazy //就是这里，必须延时加载，根本原因是bean实例化的顺序上，shiro的bean必须要先实例化，否则@Cacheable注解无效
     private UserMapper userMapper;
 
     @Resource
+    @Lazy //就是这里，必须延时加载，根本原因是bean实例化的顺序上，shiro的bean必须要先实例化，否则@Cacheable注解无效
     private RoleMapper roleMapper;
 
+    @Resource
+    @Lazy
+    private PermissionMapper permissionMapper;
     /**
      * 授权
      */
@@ -46,6 +54,13 @@ public class MyRealm extends AuthorizingRealm {
         }
         simpleAuthorizationInfo.setRoles(roleSet);
 
+        // 获取用户权限集
+        Set<Permission> permissionList = permissionMapper.findByUserName(userName);
+        Set<String> permissionSet = new HashSet<>();
+        for (Permission p : permissionList) {
+            permissionSet.add(p.getEnname());
+        }
+        simpleAuthorizationInfo.setStringPermissions(permissionSet);
         return simpleAuthorizationInfo;
     }
 
