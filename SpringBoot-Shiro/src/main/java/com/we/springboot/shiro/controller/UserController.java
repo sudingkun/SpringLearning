@@ -79,4 +79,10 @@ public class UserController {
         return "user";
     }
 
+    @GetMapping(value = "kickout")
+    public String kickOut(Model model) {
+        model.addAttribute("value", "账号已经登入");
+        return "user";
+    }
+
 }

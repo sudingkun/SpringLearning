@@ -33,7 +33,7 @@ public class Permission implements Serializable {
     /**
      * 权限英文名称
      */
-    private String enname;
+    private String enName;
 
     private String url;
 

@@ -5,17 +5,11 @@
         <id column="id" property="id"/>
         <result column="parent_id" property="parentId"/>
         <result column="name" property="name"/>
-        <result column="enname" property="enname"/>
+        <result column="enName" property="enName"/>
     </resultMap>
-    <sql id="Base_Column_List">
-            id,
-            parent_id,
-            `name`,
-            enname
-    </sql>
 
     <select id="findByUserName" resultMap="BaseResultMap">
-        select p.id,p.name,p.enname,p.url
+        select p.id,p.parent_id,p.name,p.enName,p.url
         from shiro_permission p
         left join shiro_role_permission rp
         on p.id=rp.permission_id

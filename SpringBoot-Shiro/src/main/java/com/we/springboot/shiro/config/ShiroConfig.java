@@ -1,19 +1,25 @@
 package com.we.springboot.shiro.config;
 
+import com.we.springboot.shiro.filter.KickoutSessionControlFilter;
+import com.we.springboot.shiro.listener.MySessionListener;
 import com.we.springboot.shiro.realm.MyRealm;
+import com.we.springboot.shiro.serializer.MyRedisSerializer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.session.SessionListener;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.crazycake.shiro.RedisCacheManager;
 import org.crazycake.shiro.RedisManager;
+import org.crazycake.shiro.RedisSessionDAO;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
@@ -22,9 +28,8 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
 import javax.annotation.Resource;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Properties;
+import javax.servlet.Filter;
+import java.util.*;
 
 /**
  * @author: sudingkun
@@ -35,6 +40,9 @@ public class ShiroConfig {
 
     @Resource
     private RedisProperties redisProperties;
+
+    @Resource
+    private MySessionListener mySessionListener;
 
     /**
      * 凭证匹配器
@@ -62,6 +70,7 @@ public class ShiroConfig {
         securityManager.setRealm(realm);
         securityManager.setRememberMeManager(rememberMeManager());
         securityManager.setCacheManager(cacheManager());
+        securityManager.setSessionManager(sessionManager());
         return securityManager;
     }
 
@@ -82,6 +91,12 @@ public class ShiroConfig {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
 
+        //自定义拦截器限制并发人数
+        Map<String, Filter> filtersMap = new LinkedHashMap<>();
+        //限制同一帐号同时在线的个数
+        filtersMap.put("kickout", kickoutSessionControlFilter());
+        shiroFilterFactoryBean.setFilters(filtersMap);
+
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
         //配置退出 过滤器,其中的具体的退出代码Shiro已经替我们实现了
         filterChainDefinitionMap.put("/logout", "logout");
@@ -91,10 +106,11 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/fonts/**", "anon");
         filterChainDefinitionMap.put("/img/**", "anon");
         //如果有配置druid需要加上下面这个
-        //filterChainDefinitionMap.put("/druid/**", "anon");
+        filterChainDefinitionMap.put("/druid/**", "anon");
         filterChainDefinitionMap.put("/login", "anon");
+        filterChainDefinitionMap.put("/kickout", "anon");
         //filterChainDefinitionMap.put("/**", "authc"); 设置了remember 就改成下面的
-        filterChainDefinitionMap.put("/**", "user");
+        filterChainDefinitionMap.put("/**", "kickout,user");
 
         // 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
         shiroFilterFactoryBean.setLoginUrl("/toLogin");
@@ -109,6 +125,18 @@ public class ShiroConfig {
         return shiroFilterFactoryBean;
     }
 
+    /**
+     * 限制同一账号登录同时登录人数控制
+     */
+    private KickoutSessionControlFilter kickoutSessionControlFilter() {
+        KickoutSessionControlFilter kickoutSessionControlFilter = new KickoutSessionControlFilter();
+        kickoutSessionControlFilter.setCacheManager(cacheManager());
+        kickoutSessionControlFilter.setSessionManager(sessionManager());
+        kickoutSessionControlFilter.setKickoutAfter(true);
+        kickoutSessionControlFilter.setMaxSession(1);
+        kickoutSessionControlFilter.setKickoutUrl("kickout");
+        return kickoutSessionControlFilter;
+    }
 
     /**
      * 处理未授权时抛出的异常
@@ -121,6 +149,27 @@ public class ShiroConfig {
         properties.setProperty("org.apache.shiro.authz.UnauthorizedException", "/unauthorized");
         simpleMappingExceptionResolver.setExceptionMappings(properties);
         return simpleMappingExceptionResolver;
+    }
+
+    /*Shiro中使用redis管理session*/
+
+    @Bean
+    public RedisSessionDAO redisSessionDAO() {
+        RedisSessionDAO redisSessionDAO = new RedisSessionDAO();
+        redisSessionDAO.setRedisManager(redisManager());
+        return redisSessionDAO;
+    }
+
+    @Bean
+    public DefaultWebSessionManager sessionManager() {
+        DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
+        sessionManager.setSessionDAO(redisSessionDAO());
+        //取消url 后面的 JSESSIONID
+        sessionManager.setSessionIdUrlRewritingEnabled(false);
+        Collection<SessionListener> sessionListeners = new ArrayList<>();
+        sessionListeners.add(mySessionListener);
+        sessionManager.setSessionListeners(sessionListeners);
+        return sessionManager;
     }
 
     /*Shiro中使用redis*/

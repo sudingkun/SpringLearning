@@ -5,19 +5,13 @@
         <id column="id" property="id"/>
         <result column="parent_id" property="parentId"/>
         <result column="name" property="name"/>
-        <result column="enname" property="enName"/>
+        <result column="enName" property="enName"/>
     </resultMap>
 
-    <sql id="Base_Column_List">
-            id,
-            parent_id,
-            `name`,
-            enname
-    </sql>
 
     <select id="findByUserName" resultMap="BaseResultMap">
         select
-        r.id,r.parent_id,r.name,r.enname
+        r.id,r.parent_id,r.name,r.enName
         from shiro_role r
         left join shiro_user_role ur
         on r.id=ur.role_id

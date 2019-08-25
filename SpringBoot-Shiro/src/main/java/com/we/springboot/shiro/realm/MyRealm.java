@@ -25,12 +25,13 @@ import java.util.Set;
  */
 public class MyRealm extends AuthorizingRealm {
 
+    //就是这里，必须延时加载，根本原因是bean实例化的顺序上，shiro的bean必须要先实例化，否则@Cacheable注解无效
+    @Lazy
     @Resource
-    @Lazy //就是这里，必须延时加载，根本原因是bean实例化的顺序上，shiro的bean必须要先实例化，否则@Cacheable注解无效
     private UserMapper userMapper;
 
     @Resource
-    @Lazy //就是这里，必须延时加载，根本原因是bean实例化的顺序上，shiro的bean必须要先实例化，否则@Cacheable注解无效
+    @Lazy
     private RoleMapper roleMapper;
 
     @Resource
@@ -58,7 +59,7 @@ public class MyRealm extends AuthorizingRealm {
         Set<Permission> permissionList = permissionMapper.findByUserName(userName);
         Set<String> permissionSet = new HashSet<>();
         for (Permission p : permissionList) {
-            permissionSet.add(p.getEnname());
+            permissionSet.add(p.getEnName());
         }
         simpleAuthorizationInfo.setStringPermissions(permissionSet);
         return simpleAuthorizationInfo;
