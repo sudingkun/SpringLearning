@@ -24,8 +24,17 @@ import java.util.LinkedList;
 import java.util.Map;
 
 
+/**
+ * @author sudingkun
+ */
 @Setter
 public class KickoutSessionControlFilter extends AccessControlFilter {
+
+    private static final String KICKOUT_SESSION = "kickout";
+
+    private static final String AJAX_REQUEST = "XMLHttpRequest";
+
+    private static final String REQUEST_HEADER = "X-Requested-With";
 
     /**
      * 踢出后到的地址
@@ -60,7 +69,6 @@ public class KickoutSessionControlFilter extends AccessControlFilter {
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws IOException {
         Subject subject = getSubject(request, response);
-
         //如果没有登录，直接进行之后的流程
         if (!subject.isAuthenticated() && !subject.isRemembered()) {
             return true;
@@ -71,20 +79,17 @@ public class KickoutSessionControlFilter extends AccessControlFilter {
         Session session = subject.getSession();
         Serializable sessionId = session.getId();
 
-        //读取缓存，没有就存入
+        // 初始化用户的队列放到缓存里
         Deque<Serializable> deque = cache.get(username);
-
-        //如果此用户没有session队列，也就是还没有登录过，缓存中没有
         if (deque == null) {
             deque = new LinkedList<>();
+            cache.put(username, deque);
         }
 
         //如果队列里没有此sessionId，且用户没有被踢出；放入队列
-        if (!deque.contains(sessionId) && session.getAttribute("kickout") == null) {
+        if (!deque.contains(sessionId) && session.getAttribute(KICKOUT_SESSION) == null) {
             //将sessionId存入队列
             deque.push(sessionId);
-            //将用户的sessionId队列缓存
-            cache.put(username, deque);
         }
 
         //如果队列里的sessionId数超出最大会话数，开始踢人
@@ -99,24 +104,24 @@ public class KickoutSessionControlFilter extends AccessControlFilter {
             Session kickoutSession = sessionManager.getSession(new DefaultSessionKey(kickoutSessionId));
             if (kickoutSession != null) {
                 //设置会话的kickout属性表示踢出了
-                kickoutSession.setAttribute("kickout", true);
+                kickoutSession.setAttribute(KICKOUT_SESSION, true);
             }
         }
 
         //如果被踢出了，直接退出，重定向到踢出后的地址
-        if (session.getAttribute("kickout") != null) {
-            //会话被踢出了
+        if (session.getAttribute(KICKOUT_SESSION) != null) {
             //退出登录
             subject.logout();
             saveRequest(request);
 
             Map<String, String> resultMap = new HashMap<>(2);
             //判断是不是Ajax请求
-            if ("XMLHttpRequest".equalsIgnoreCase(((HttpServletRequest) request).getHeader("X-Requested-With"))) {
+            if (AJAX_REQUEST.equalsIgnoreCase(((HttpServletRequest) request).getHeader(REQUEST_HEADER))) {
                 resultMap.put("code", "300");
                 resultMap.put("msg", "您已经在其他地方登录，请重新登录！");
                 //输出json串
-                out(response, resultMap);
+//                out(response, resultMap);
+                WebUtils.toHttp(response).sendError(300,"您已经在其他地方登录，请重新登录！");
             } else {
                 //重定向
                 WebUtils.issueRedirect(request, response, kickoutUrl);
