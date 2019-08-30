@@ -77,9 +77,8 @@ public class ShiroConfig {
     /**
      * 处理未授权方式有2种
      * 1、使用 filterChainDefinitionMap.put("/add", "roles[admin]");
-     * 没有使用注解方式 @RequiresRoles(value = {"admin"})
-     * 设置 shiroFilterFactoryBean.setUnauthorizedUrl("/unauthorized"); unauthorized 是url
-     * 2、使用注解方式。则设置shiroFilterFactoryBean.setUnauthorizedUrl("/unauthorized");无效
+     *    设置 shiroFilterFactoryBean.setUnauthorizedUrl("/unauthorized"); unauthorized 是url
+     * 2、使用注解方式@RequiresRoles(value = {"admin"})。则设置shiroFilterFactoryBean.setUnauthorizedUrl("/unauthorized");无效
      *
      * @see <a href="https://www.jianshu.com/p/e03f5b54838c">无效原因</a>
      * 解决方法：
@@ -110,7 +109,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/login", "anon");
         filterChainDefinitionMap.put("/kickout", "anon");
         //filterChainDefinitionMap.put("/**", "authc"); 设置了remember 就改成下面的
-        filterChainDefinitionMap.put("/**", "kickout,user");
+        filterChainDefinitionMap.put("/**", "user,kickout");
 
         // 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
         shiroFilterFactoryBean.setLoginUrl("/toLogin");
