@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: elasticsearch
+  data:
+    elasticsearch:
+      cluster-name: docker-cluster
+      cluster-nodes: 47.106.95.195:9300
+      repositories:
+        enabled: true
