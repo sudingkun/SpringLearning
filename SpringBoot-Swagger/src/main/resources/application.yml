@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    active: prod
+  application:
+    name: swagger
+
+
+---
+spring:
+  profiles: dev
+swagger:
+  open-config: true
+
+---
+spring:
+  profiles: prod
+swagger:
+  open-config: false
