@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
 /**
  * @author sudingkun
  */
@@ -21,12 +19,13 @@ public class Bill {
     @Excel(name = "手机号", width = 15)
     private String phone;
 
-    @Excel(name = "创建时间", format = "yyyy-MM-dd", width = 15)
-    private Date paymentDate;
+    @Excel(name = "创建时间", width = 15)
+    private String paymentDate;
 
     private String costs;
 
     @Excel(name = "总额", width = 10)
     private Double total;
+
 
 }
