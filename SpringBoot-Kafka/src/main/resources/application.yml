@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: kafka
+  kafka:
+    bootstrap-servers: 192.168.6.129:9092 #指定kafka代理地址，可以多个
+    ############################kafka producer 设置############################
+    producer:
+      retries: 1  # 重试次数
+      # 每次批量发送消息的数量
+      batch-size: 16384
+      buffer-memory: 33554432
+      properties:
+        max.request.size: 6086419
+      # 指定消息key和消息体的编/解码方式
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+
+    ############################kafka consumer 设置############################
+    consumer:
+      # 指定默认消费者group id
+      group-id: test_group
+      auto-offset-reset: earliest
+      enable-auto-commit: true
+      auto-commit-interval: 100
+      #设置一次fetch记录的最大值2M(2*1024*1024),默认值为1M
+      #      properties:
+      #        max.partition.fetch.bytes: 6086419
+      # 指定消息key和消息体的编解码方式
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
