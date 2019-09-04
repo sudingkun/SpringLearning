@@ -1,6 +1,7 @@
 package com.we.springboot.kafka.producer;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +23,16 @@ public class Producer {
 
     private static final Integer SEND_COUNT = 2;
 
-    private static File file = new File("C:/Users/welov/Pictures/壁纸/壁纸002-2.jpg");
+    private static File file;
+
+    static {
+        ClassPathResource resource = new ClassPathResource("file/壁纸.jpg");
+        try {
+            file = resource.getFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @RequestMapping("sendMsg")
     public String sendMessage() {
@@ -35,9 +45,7 @@ public class Producer {
     @RequestMapping("sendFile")
     public String sendFile() throws IOException {
         byte[] in = Files.readAllBytes(file.toPath());
-        for (int i = 0; i < SEND_COUNT; i++) {
-            byteKafkaTemplate.send("file", i, "upload", in);
-        }
+            byteKafkaTemplate.send("file", 0, "upload", in);
         return "send file success";
     }
 }

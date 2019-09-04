@@ -2,7 +2,7 @@ spring:
   application:
     name: kafka
   kafka:
-    bootstrap-servers: 192.168.6.129:9092 #指定kafka代理地址，可以多个
+    bootstrap-servers: 47.106.95.195:9092 #指定kafka代理地址，可以多个
     ############################kafka producer 设置############################
     producer:
       retries: 1  # 重试次数
@@ -13,7 +13,7 @@ spring:
         max.request.size: 6086419
       # 指定消息key和消息体的编/解码方式
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
     ############################kafka consumer 设置############################
     consumer:
@@ -27,4 +27,4 @@ spring:
       #        max.partition.fetch.bytes: 6086419
       # 指定消息key和消息体的编解码方式
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
