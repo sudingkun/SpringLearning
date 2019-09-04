@@ -12,6 +12,16 @@ import java.util.Map;
  * @author sudingkun
  */
 public class MapImportHandler extends ExcelDataHandlerDefaultImpl<Map<String, Object>> {
+    public MapImportHandler() {
+    }
+
+    public MapImportHandler(String startColumn, String endColumn) {
+        this.startColumn = startColumn;
+        this.endColumn = endColumn;
+    }
+
+    private String startColumn = Constants.Bill.PAYMENT_DATE;
+    private String endColumn = Constants.Bill.TOTAL;
 
     private static Boolean TAG = Boolean.FALSE;
 
@@ -19,19 +29,21 @@ public class MapImportHandler extends ExcelDataHandlerDefaultImpl<Map<String, Ob
 
     @Override
     public void setMapValue(Map<String, Object> map, String originKey, Object value) {
-        if (Constants.Bill.NAME.equals(originKey)) {
+        if (endColumn.equals(originKey)) {
             TAG = Boolean.FALSE;
         }
-        //读取到总额后
+
         if (TAG) {
             hashMap.put(originKey, value);
             String jsonString = JSON.toJSONString(hashMap);
             originKey = Constants.COLUMN;
             value = jsonString;
         }
-        if (Constants.Bill.TOTAL.equals(originKey)) {
+
+        if (startColumn.equals(originKey)) {
             TAG = Boolean.TRUE;
         }
+
         switch (originKey) {
             case Constants.Bill.NAME:
                 originKey = "name";
