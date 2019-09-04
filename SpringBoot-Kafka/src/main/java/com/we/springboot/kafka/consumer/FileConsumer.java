@@ -21,7 +21,7 @@ public class FileConsumer {
 
     private void receive(ConsumerRecord<String, byte[]> record, int partitions) throws IOException {
         log.info("partitions " + partitions + "  ");
-        FileOutputStream outputStream = new FileOutputStream(new File("C:/WE/WE/test", ".jpg"));
+        FileOutputStream outputStream = new FileOutputStream(new File("C:/Users/welov/Desktop", "pic.jpg"));
         Optional<byte[]> kafkaMessage = Optional.ofNullable(record.value());
         if (kafkaMessage.isPresent()) {
             byte[] message = record.value();

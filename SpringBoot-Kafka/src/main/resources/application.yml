@@ -13,7 +13,9 @@ spring:
         max.request.size: 6086419
       # 指定消息key和消息体的编/解码方式
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
 
     ############################kafka consumer 设置############################
     consumer:
@@ -23,8 +25,10 @@ spring:
       enable-auto-commit: true
       auto-commit-interval: 100
       #设置一次fetch记录的最大值2M(2*1024*1024),默认值为1M
-      #      properties:
-      #        max.partition.fetch.bytes: 6086419
+      properties:
+        max.partition.fetch.bytes: 6086419
       # 指定消息key和消息体的编解码方式
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+#      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
