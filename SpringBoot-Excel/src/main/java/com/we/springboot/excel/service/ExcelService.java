@@ -25,12 +25,12 @@ public class ExcelService {
     public static List<Bill> getCustom() {
         List<Bill> bills = new ArrayList<>();
         bills.add(new Bill("张三", "110", new Date(), "{\"水费\":50,\"电费\":50,\"物业费\":10}", 110D));
-//        bills.add(new Bill("李四", "120", new Date(), "{\"水费\":50,\"电费\":60,\"物业费\":20}", 130D));
-//        bills.add(new Bill("王五", "119", new Date(), "{\"水费\":60,\"电费\":20,\"物业费\":10}", 90D));
+        bills.add(new Bill("李四", "120", new Date(), "{\"水费\":50,\"电费\":60,\"物业费\":20}", 130D));
+        bills.add(new Bill("王五", "119", new Date(), "{\"水费\":60,\"电费\":20,\"物业费\":10}", 90D));
         return bills;
     }
 
-    public static List<Map<String, String>> bean2Map(List<Bill> bills) throws Exception {
+    public  List<Map<String, String>> bean2Map(List<Bill> bills) throws Exception {
         List<Map<String, String>> data = new ArrayList<>();
         for (Bill bill : bills) {
             Map<String, String> result = BeanUtils.describe(bill);
@@ -39,19 +39,6 @@ public class ExcelService {
         return data;
     }
 
- /*   public static void main(String[] args) throws Exception {
-        List<Map<String, String>> dataList = bean2Map(getCustom());
-        List<Map<String, Object>> columns = new ArrayList<>();
-
-        Map<String, String> cost = JSONObject.parseObject(dataList.get(0).get("costs"), Map.class);
-        for (Map.Entry<String, String> entry : cost.entrySet()) {
-            HashMap<String, Object> hashMap = new HashMap<>();
-            hashMap.put("name", entry.getKey());
-            hashMap.put("value", entry.getKey());
-            columns.add(hashMap);
-        }
-        System.out.println(columns);
-    }*/
 
     public List<Map<String, Object>> getCustom(List<Map<String, String>> dataList) {
         for (Map<String, String> m : dataList) {
