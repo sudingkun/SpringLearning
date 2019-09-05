@@ -26,10 +26,15 @@ public class Bill {
     private Date paymentDate;
 
     @ExcelIgnore
-    private String costs;
+    private Object costs;
 
     @Excel(name = "总额", width = 10)
     private Double total;
 
-
+    public Bill(String name, String phone, Date paymentDate, Double total) {
+        this.name = name;
+        this.phone = phone;
+        this.paymentDate = paymentDate;
+        this.total = total;
+    }
 }
