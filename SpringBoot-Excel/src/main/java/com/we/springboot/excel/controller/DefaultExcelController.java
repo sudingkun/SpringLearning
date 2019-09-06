@@ -25,23 +25,33 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 默认导入导出（excel没有自己新增列）
+ *
  * @author sudingkun
  */
 @Controller
-@RequestMapping("defaultExcel")
+@RequestMapping("default")
 @RequiredArgsConstructor
 public class DefaultExcelController {
 
     private final ExcelService excelService;
 
+    /**
+     * 设置基本的导出参数
+     *
+     */
     private void initExportParams(ExportParams params) {
         params.setSheetName("账单");
         params.setTitle("九月份账单");
+        //导出类型xls、xlsx
         params.setType(ExcelType.XSSF);
     }
 
@@ -50,7 +60,7 @@ public class DefaultExcelController {
     }
 
     /**
-     * 导出指定模板
+     * 导出指定模板（web）
      */
     @RequestMapping("exportTemplate")
     public void exportTemplate(HttpServletResponse response) throws IOException {
@@ -65,9 +75,9 @@ public class DefaultExcelController {
      */
     @RequestMapping("exportTemplate2")
     public void exportTemplate2(HttpServletResponse response) {
-        //设置导出参数
         ExportParams params = new ExportParams();
         initExportParams(params);
+
         Workbook workbook = ExcelExportUtil.exportExcel(params, Bill.class, new ArrayList<>());
         ExcelUtils.downLoadExcel("立林小区9月份账单.xlsx", response, workbook);
     }
@@ -77,9 +87,9 @@ public class DefaultExcelController {
      */
     @RequestMapping("exportTemplate3")
     public void exportTemplate3() throws IOException {
-        //设置导出参数
         ExportParams params = new ExportParams();
         initExportParams(params);
+
         Workbook workbook = ExcelExportUtil.exportExcel(params, Bill.class, new ArrayList<>());
         FileOutputStream fileOutputStream = new FileOutputStream("C:/Users/admin/Desktop/" + getFile().getName());
         ExcelUtils.downLoadExcel(fileOutputStream, workbook);
@@ -87,13 +97,12 @@ public class DefaultExcelController {
 
     /**
      * 以流的形式导出对象对应的excel模板（web）
-     * 可以给别的模块调用
      */
     @RequestMapping("exportTemplate4")
     public ResponseEntity<byte[]> exportTemplate4() throws IOException {
-        //设置导出参数
         ExportParams params = new ExportParams();
         initExportParams(params);
+
         Workbook workbook = ExcelExportUtil.exportExcel(params, Bill.class, new ArrayList<>());
         return ExcelUtils.downLoadExcel(getFile().getName(), workbook);
     }
@@ -103,10 +112,10 @@ public class DefaultExcelController {
      */
     @RequestMapping("exportData")
     public void exportData(HttpServletResponse response) {
-        //设置导出参数
         ExportParams params = new ExportParams();
         initExportParams(params);
-        Workbook workbook = ExcelExportUtil.exportExcel(params, Bill.class, excelService.getAll());
+
+        Workbook workbook = ExcelExportUtil.exportExcel(params, Bill.class, excelService.getBills());
         ExcelUtils.downLoadExcel("立林小区8月份账单.xlsx", response, workbook);
     }
 
@@ -125,7 +134,7 @@ public class DefaultExcelController {
 
 
     /**
-     * web文件上传模式
+     * web文件上传
      * todo 导入校验
      */
     @PostMapping("import2")
@@ -139,9 +148,9 @@ public class DefaultExcelController {
     /**
      * 模拟发送http post 请求
      */
-    @RequestMapping("http/import2")
+    @RequestMapping("http/import")
     public void httpUpload() {
-        String url = "http://localhost:8080/defaultExcel/import2";
+        String url = "http://localhost:8080/default/import2";
         File file = new File("C:/Users/admin/Desktop/立林小区8月份账单.xlsx");
         HttpRequest request = HttpRequest.post(url)
                 .form("file", FileUtil.file(file));

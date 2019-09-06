@@ -5,10 +5,10 @@ import cn.afterturn.easypoi.handler.impl.ExcelDataHandlerDefaultImpl;
 import com.alibaba.fastjson.JSON;
 import com.we.springboot.excel.constants.Constants;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
+/** todo 添加描述
  * @author sudingkun
  */
 public class MapImportHandler extends ExcelDataHandlerDefaultImpl<Map<String, Object>> {
@@ -25,21 +25,20 @@ public class MapImportHandler extends ExcelDataHandlerDefaultImpl<Map<String, Ob
 
     private static Boolean TAG = Boolean.FALSE;
 
-    private HashMap<String, Object> hashMap = new HashMap<>();
+    private Map<String, Object> linkedHashMap = new LinkedHashMap<>();
 
     @Override
     public void setMapValue(Map<String, Object> map, String originKey, Object value) {
-        if (endColumn.equals(originKey)) {
-            TAG = Boolean.FALSE;
-        }
-
         if (TAG) {
-            hashMap.put(originKey, value);
-            String jsonString = JSON.toJSONString(hashMap);
+            if (endColumn.equals(originKey)) {
+                TAG = Boolean.FALSE;
+                map.put("total", value);
+            }
+            linkedHashMap.put(originKey, value);
+            String jsonString = JSON.toJSONString(linkedHashMap);
             originKey = Constants.COLUMN;
             value = jsonString;
         }
-
         if (startColumn.equals(originKey)) {
             TAG = Boolean.TRUE;
         }

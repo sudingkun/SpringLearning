@@ -1,9 +1,11 @@
 package com.we.springboot.excel.service;
 
 
+import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.we.springboot.excel.bean.Bill;
-import org.apache.commons.beanutils.BeanUtils;
+import com.we.springboot.excel.dao.BillDao;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -12,54 +14,48 @@ import java.util.*;
  * @author sudingkun
  */
 @Service
+@RequiredArgsConstructor
 public class ExcelService {
 
-    public List<Bill> getAll() {
-        List<Bill> bills = new ArrayList<>();
-        bills.add(new Bill("张三", "110", new Date(), 100D));
-        bills.add(new Bill("李四", "120", new Date(), 110D));
-        bills.add(new Bill("王五", "119", new Date(), 120D));
-        return bills;
+    private final BillDao billDao;
+
+    public List<Bill> getBills() {
+        return billDao.getAll();
     }
 
-    public static List<Bill> getCustom() {
-        List<Bill> bills = new ArrayList<>();
-        bills.add(new Bill("张三", "110", new Date(), "{\"水费\":50,\"电费\":50,\"物业费\":10}", 110D));
-        bills.add(new Bill("李四", "120", new Date(), "{\"水费\":50,\"电费\":60,\"物业费\":20}", 130D));
-        bills.add(new Bill("王五", "119", new Date(), "{\"水费\":60,\"电费\":20,\"物业费\":10}", 90D));
-        return bills;
+    public Map<String, Object> getCustomBills() {
+        return process(billDao.getCustom());
     }
 
-    public  List<Map<String, String>> bean2Map(List<Bill> bills) throws Exception {
-        List<Map<String, String>> data = new ArrayList<>();
+    /**
+     * 把原始数据处理成可以被模板解析
+     *
+     * @param bills 账单原始数据
+     */
+    private Map<String, Object> process(List<Bill> bills) {
+        Set<Map<String, Object>> costList = new HashSet<>();
+        List<Map<String, Object>> billList = new ArrayList<>();
+
         for (Bill bill : bills) {
-            Map<String, String> result = BeanUtils.describe(bill);
-            data.add(result);
-        }
-        return data;
-    }
+            Map<String, Object> billMap = BeanUtil.beanToMap(bill);
+            Map<String, Object> costMap = JSONObject.parseObject(bill.getCosts());
 
-
-    public List<Map<String, Object>> getCustom(List<Map<String, String>> dataList) {
-        for (Map<String, String> m : dataList) {
-            Map<String, String> cost = JSONObject.parseObject(m.get("costs"), Map.class);
-            for (Map.Entry<String, String> entry : cost.entrySet()) {
-                HashMap<String, Object> hashMap = new HashMap<>();
-                hashMap.put("name", entry.getKey());
-                hashMap.put("value", entry.getKey());
-//                columns.add(hashMap);
+            for (Map.Entry<String, Object> entry : costMap.entrySet()) {
+                String key = entry.getKey();
+                double value = Double.parseDouble(entry.getValue().toString());
+                HashMap<String, Object> cost = new HashMap<>(8);
+                cost.put("name", key);
+                cost.put("value", "t." + key);
+                costList.add(cost);
+                billMap.put(key, value);
             }
+            billList.add(billMap);
         }
-
-        return null;
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("colList", costList);
+        map.put("bills", billList);
+        return map;
     }
 
-/*    public static List<Bill> process(List<Bill> bills) {
-        for (Bill custom : bills) {
-            Object o = JSON.parseObject((byte[]) custom.getCosts(), Map.class);
-            custom.setCosts(o);
-        }
-        return bills;
-    }*/
 
 }

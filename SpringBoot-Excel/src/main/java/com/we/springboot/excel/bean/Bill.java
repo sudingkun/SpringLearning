@@ -26,7 +26,7 @@ public class Bill {
     private Date paymentDate;
 
     @ExcelIgnore
-    private Object costs;
+    private String costs;
 
     @Excel(name = "总额", width = 10)
     private Double total;
