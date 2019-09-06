@@ -13,6 +13,17 @@ import java.nio.file.Files;
 import java.util.Date;
 
 /**
+ * 下面的3个template:（可以自己自定义序列化和反序列化）
+ *      String 是基本的消息发送，对应的序列化和反序列化：
+ *          org.apache.kafka.common.serialization.StringSerializer
+ *          org.apache.kafka.common.serialization.StringDeserializer
+ *      byte[] 可以发送任何类型，对应的序列化和反序列化：
+ *          org.apache.kafka.common.serialization.ByteArraySerializer
+ *          org.apache.kafka.common.serialization.ByteArrayDeserializer
+ *      Message 可以发送对象，对应的序列化和反序列化：
+ *          org.springframework.kafka.support.serializer.JsonSerializer
+ *          org.springframework.kafka.support.serializer.JsonDeserializer
+ *  这里的配置都是配置文件中配的，只能配置一个，每次也只能用一个。如果同时需要多个template，需要自己写配置类。
  * @author WE
  */
 @RestController
@@ -24,7 +35,6 @@ public class Producer {
     private final KafkaTemplate<String, byte[]> byteKafkaTemplate;
 
     private final KafkaTemplate<String, Message> entityKafkaTemplate;
-
 
     private static final Integer SEND_COUNT = 2;
 
