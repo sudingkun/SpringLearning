@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.kafka.annotation.EnableKafka;
 
 /**
+ * kafka配置可以使用
  * @author we
  */
 @EnableKafka

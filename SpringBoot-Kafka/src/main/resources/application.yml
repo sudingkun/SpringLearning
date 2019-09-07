@@ -2,7 +2,8 @@ spring:
   application:
     name: kafka
   kafka:
-    bootstrap-servers: 47.106.95.195:9092 #指定kafka代理地址，可以多个
+    #    bootstrap-servers: 47.106.95.195:9092 #指定kafka代理地址，可以多个
+    bootstrap-servers: node1:9092 #指定kafka代理地址，可以多个
     ############################kafka producer 设置############################
     producer:
       retries: 1  # 重试次数
@@ -13,8 +14,8 @@ spring:
         max.request.size: 6086419
       # 指定消息key和消息体的编/解码方式
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      #      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      #      value-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
 
     ############################kafka consumer 设置############################
@@ -27,8 +28,14 @@ spring:
       #设置一次fetch记录的最大值2M(2*1024*1024),默认值为1M
       properties:
         max.partition.fetch.bytes: 6086419
+        #Spring boot集成kafka时候，能够正常发送消息，但是接受消息时，
+        #报错org.apache.kafka.common.errors.SerializationException，提示序列化错误(自定义的消息对象不在kafka信任的包路径下)
+        spring:
+          json:
+            trusted:
+              packages: com.we.springboot.kafka.bean
       # 指定消息key和消息体的编解码方式
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-#      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      #      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      #      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer

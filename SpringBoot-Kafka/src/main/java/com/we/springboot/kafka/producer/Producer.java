@@ -57,6 +57,10 @@ public class Producer {
         return "send massage success";
     }
 
+    /**
+     * 发送小文件不需要设置
+     * 发送大文件需要设置application.yml里面的，还需要设置kafka服务器server.properties
+     */
     @RequestMapping("sendFile")
     public String sendFile() throws IOException {
         byte[] in = Files.readAllBytes(file.toPath());
