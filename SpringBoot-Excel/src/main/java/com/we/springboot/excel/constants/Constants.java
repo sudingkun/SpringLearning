@@ -4,7 +4,8 @@ package com.we.springboot.excel.constants;
  * @author we
  */
 public interface Constants {
-    String COLUMN = "costs";
+
+    String CUSTOM_COLUMN = "costs";
 
     interface Bill {
         String NAME = "用户名";

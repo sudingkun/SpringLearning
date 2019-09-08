@@ -1,10 +1,9 @@
 package com.we.springboot.excel.service;
 
 
-import cn.hutool.core.bean.BeanUtil;
-import com.alibaba.fastjson.JSONObject;
 import com.we.springboot.excel.bean.Bill;
-import com.we.springboot.excel.dao.BillDao;
+import com.we.springboot.excel.constants.Constants;
+import com.we.springboot.excel.dao.BillMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +16,15 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ExcelService {
 
-    private final BillDao billDao;
+    private final BillMapper billMapper;
 
-    public List<Bill> getBills() {
-        return billDao.getAll();
+    public List<Bill> getBillList() {
+        return billMapper.selectList(null);
     }
 
+
     public Map<String, Object> getCustomBills() {
-        return process(billDao.getCustom());
+        return process(billMapper.selectList(null));
     }
 
     /**
@@ -34,26 +34,30 @@ public class ExcelService {
      */
     private Map<String, Object> process(List<Bill> bills) {
         Set<Map<String, Object>> costList = new HashSet<>();
-        List<Map<String, Object>> billList = new ArrayList<>();
 
         for (Bill bill : bills) {
-            Map<String, Object> billMap = BeanUtil.beanToMap(bill);
-            Map<String, Object> costMap = JSONObject.parseObject(bill.getCosts());
-
-            for (Map.Entry<String, Object> entry : costMap.entrySet()) {
-                String key = entry.getKey();
-                double value = Double.parseDouble(entry.getValue().toString());
-                HashMap<String, Object> cost = new HashMap<>(8);
-                cost.put("name", key);
-                cost.put("value", "t." + key);
-                costList.add(cost);
-                billMap.put(key, value);
+            Map<String, Object> costMap = bill.getCosts();
+            for (String key : costMap.keySet()) {
+                if (!Constants.Bill.TOTAL.equals(key)) {
+                    Map<String, Object> cost = new HashMap<>(2);
+                    cost.put("name", key);
+                    cost.put("value", "t.costs." + key);
+                    costList.add(cost);
+                }
             }
-            billList.add(billMap);
         }
+        //41行if判断和这里加上这个是为了保证，"总额"读取时能排在最后
+        //水费、总额
+        //水费、电费、总额
+        //如果不做处理，最后会变成 水费、总额、电费
+        Map<String, Object> cost = new HashMap<>(2);
+        cost.put("name", Constants.Bill.TOTAL);
+        cost.put("value", "t.costs." + Constants.Bill.TOTAL);
+        costList.add(cost);
+
         Map<String, Object> map = new HashMap<>(2);
         map.put("colList", costList);
-        map.put("bills", billList);
+        map.put("bills", bills);
         return map;
     }
 

@@ -1,6 +1,7 @@
 package com.we.springboot.excel.utils;
 
 
+import cn.afterturn.easypoi.exception.excel.ExcelExportException;
 import com.google.common.io.Files;
 import com.we.springboot.excel.constants.Constants;
 import org.apache.commons.lang3.StringUtils;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
@@ -21,7 +23,7 @@ public class ExcelUtils {
     }
 
     /**
-     * 获取文件类型
+     * 获取文件类型（后缀）
      *
      * @param fileName 文件名
      * @return excel 文件类型(xls,xlsx)
@@ -30,6 +32,11 @@ public class ExcelUtils {
         return Files.getFileExtension(fileName);
     }
 
+    /**
+     * 获取excel不同格式的contentType
+     *
+     * @param fileName 文件名
+     */
     private static String getContentType(String fileName) {
         String contentType = Constants.Excel.ContentType.XLSX;
         if (Constants.Excel.Type.XLS.equals(getFileType(fileName).toLowerCase())) {
@@ -43,17 +50,13 @@ public class ExcelUtils {
      *
      * @param fileName 文件名
      */
-    private static HttpHeaders getExcelHeader(String fileName) {
+    private static HttpHeaders getExcelHeader(String fileName) throws UnsupportedEncodingException {
         if (StringUtils.isBlank(getFileType(fileName))) {
             fileName += "." + Constants.Excel.Type.XLSX;
         }
         HttpHeaders headers = new HttpHeaders();
-        try {
-            headers.add("Content-Type", getContentType(fileName));
-            headers.add("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            //抛出定制异常（文件名有问题）给全局异常处理器 todo
-        }
+        headers.add("Content-Type", getContentType(fileName));
+        headers.add("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
         return headers;
     }
 
@@ -64,17 +67,17 @@ public class ExcelUtils {
      * @param response 响应
      * @param workbook excel内容
      */
-    public static void downLoadExcel(String fileName, HttpServletResponse response, Workbook workbook) {
+    public static void downLoadExcel(String fileName, HttpServletResponse response, Workbook workbook) throws UnsupportedEncodingException {
         if (StringUtils.isBlank(getFileType(fileName))) {
             fileName += "." + Constants.Excel.Type.XLSX;
         }
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("content-Type", getContentType(fileName));
-            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
-            workbook.write(response.getOutputStream());
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("content-Type", getContentType(fileName));
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
+        try (ServletOutputStream out = response.getOutputStream()) {
+            workbook.write(out);
         } catch (IOException e) {
-            //抛出定制异常（导出失败）给全局异常处理器 todo
+            throw new ExcelExportException(e.getMessage());
         }
     }
 
@@ -85,8 +88,9 @@ public class ExcelUtils {
     public static void downLoadExcel(FileOutputStream fileOutputStream, Workbook workbook) {
         try {
             workbook.write(fileOutputStream);
+            fileOutputStream.close();
         } catch (IOException e) {
-            //抛出定制异常（导出失败）给全局异常处理器 todo
+            throw new ExcelExportException(e.getMessage());
         }
     }
 
@@ -94,8 +98,8 @@ public class ExcelUtils {
      * @param fileName 文件名
      * @param workbook excel内容
      */
-    public static ResponseEntity<byte[]> downLoadExcel(String fileName, Workbook workbook)  {
-        byte[] body = new byte[0];
+    public static ResponseEntity<byte[]> downLoadExcel(String fileName, Workbook workbook) throws UnsupportedEncodingException {
+        byte[] body;
         try {
             //将excel内容写入outputStream
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -107,10 +111,9 @@ public class ExcelUtils {
             body = new byte[in.available()];
             in.read(body);
         } catch (IOException e) {
-            //抛出定制异常给全局异常处理器 todo
+            throw new ExcelExportException(e.getMessage());
         }
-            return new ResponseEntity<>(body, getExcelHeader(fileName), HttpStatus.OK);
+        return new ResponseEntity<>(body, getExcelHeader(fileName), HttpStatus.OK);
     }
-
 
 }

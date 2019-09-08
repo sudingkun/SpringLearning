@@ -1,11 +1,13 @@
 package com.we.springboot.excel.dao;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.we.springboot.excel.bean.Bill;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -14,20 +16,30 @@ import java.util.List;
 @Repository
 public class BillDao {
 
-    public List<Bill> getAll() {
-        List<Bill> bills = new ArrayList<>();
-        bills.add(new Bill("张三", "110", new Date(), 100D));
-        bills.add(new Bill("李四", "120", new Date(), 110D));
-        bills.add(new Bill("王五", "119", new Date(), 120D));
-        return bills;
-    }
 
     public List<Bill> getCustom() {
         List<Bill> bills = new ArrayList<>();
-        bills.add(new Bill("张三", "133", new Date(), "{\"水费\":\"20.0\",\"物业费\":\"10.0\",\"电费\":\"30.0\",\"总额\":\"60.0\"}", 60d));
-        bills.add(new Bill("李四", "144", new Date(), "{\"水费\":\"40.0\",\"电费\":\"20.0\",\"总额\":\"60.0\"}", 60d));
-        bills.add(new Bill("王五", "155", new Date(), "{\"水费\":\"50.0\",\"物业费\":\"20.0\",\"总额\":\"70.0\"}", 70d));
-        bills.add(new Bill("赵6", "166", new Date(), "{\"水费\":\"0.0\",\"物业费\":\"0.5\",\"总额\":\"0.5\"}", 0.5));
+        JSONObject costs = new JSONObject(new LinkedHashMap<>());
+        costs.put("水费", 50.00);
+        costs.put("电费", 50.00);
+        costs.put("总额", 100.00);
+        bills.add(new Bill("张三", "133", new Date(), costs, 60d));
+        costs = new JSONObject(new LinkedHashMap<>());
+        costs.put("水费", 60.50);
+        costs.put("物业费", 50.50);
+        costs.put("总额", 111.00);
+        bills.add(new Bill("李四", "144", new Date(), costs, 60d));
+        costs = new JSONObject(new LinkedHashMap<>());
+        costs.put("电费", 20.00);
+        costs.put("物业费", 20.00);
+        costs.put("总额", 40);
+        bills.add(new Bill("王五", "155", new Date(), costs, 70d));
+        costs = new JSONObject(new LinkedHashMap<>());
+        costs.put("水费", 10);
+        costs.put("电费", 20);
+        costs.put("物业费", 30);
+        costs.put("总额", 60);
+        bills.add(new Bill("赵6", "166", new Date(), costs, 0.5));
         return bills;
     }
 }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.we.springboot.excel.dao.BillMapper">
+    <sql id="Base_Column_List">
+            `name`,
+            phone,
+            payment_date,
+            costs,
+            total
+    </sql>
+
+    <resultMap id="BaseResultMap" type="com.we.springboot.excel.bean.Bill">
+        <result column="name" property="name"/>
+        <result column="phone" property="phone"/>
+        <result column="payment_date" property="paymentDate"/>
+        <result column="costs" property="costs" typeHandler="com.we.springboot.excel.handler.JsonTypeHandler"/>
+        <result column="total" property="total"/>
+    </resultMap>
+
+    <insert id="insertList">
+        INSERT INTO excel_bill(
+        name,
+        phone,
+        payment_date,
+        costs,
+        total
+        )VALUES
+        <foreach collection="list" item="element" index="index" separator=",">
+            (
+            #{element.name},
+            #{element.phone},
+            #{element.paymentDate},
+            #{element.costs,typeHandler=com.we.springboot.excel.handler.JsonTypeHandler},
+            #{element.total}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

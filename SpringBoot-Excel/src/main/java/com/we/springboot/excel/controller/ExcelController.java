@@ -6,9 +6,9 @@ import cn.afterturn.easypoi.excel.ExcelImportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
 import cn.afterturn.easypoi.excel.entity.enmus.ExcelType;
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.http.HttpRequest;
+import cn.afterturn.easypoi.excel.entity.result.ExcelImportResult;
 import com.we.springboot.excel.bean.Bill;
+import com.we.springboot.excel.bean.ExcelVerifyEntityOfMode;
 import com.we.springboot.excel.service.ExcelService;
 import com.we.springboot.excel.utils.ExcelUtils;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 默认导入导出（excel没有自己新增列）
@@ -38,18 +37,17 @@ import java.util.List;
  * @author sudingkun
  */
 @Controller
-@RequestMapping("default")
+@RequestMapping("excel")
 @RequiredArgsConstructor
-public class DefaultExcelController {
+public class ExcelController {
 
     private final ExcelService excelService;
 
     /**
      * 设置基本的导出参数
-     *
      */
     private void initExportParams(ExportParams params) {
-        params.setSheetName("账单");
+        params.setSheetName("2019-9");
         params.setTitle("九月份账单");
         //导出类型xls、xlsx
         params.setType(ExcelType.XSSF);
@@ -62,44 +60,49 @@ public class DefaultExcelController {
     /**
      * 导出指定模板（web）
      */
-    @RequestMapping("exportTemplate")
-    public void exportTemplate(HttpServletResponse response) throws IOException {
+    @RequestMapping("export")
+    public void export(HttpServletResponse response) throws IOException {
         response.setHeader("Content-Disposition", "attachment;filename=" + getFile().getName());
         ServletOutputStream outputStream = response.getOutputStream();
-        IOUtils.copy(new FileInputStream(getFile()), outputStream);
+        FileInputStream inputStream = new FileInputStream(getFile());
+        IOUtils.copy(inputStream, outputStream);
         outputStream.close();
+        inputStream.close();
     }
 
     /**
      * 导出对象对应的excel模板（web）
      */
-    @RequestMapping("exportTemplate2")
-    public void exportTemplate2(HttpServletResponse response) {
+    @RequestMapping("export2")
+    public void export2(HttpServletResponse response) throws IOException {
         ExportParams params = new ExportParams();
         initExportParams(params);
 
         Workbook workbook = ExcelExportUtil.exportExcel(params, Bill.class, new ArrayList<>());
-        ExcelUtils.downLoadExcel("立林小区9月份账单.xlsx", response, workbook);
+        ExcelUtils.downLoadExcel("9月份账单.xlsx", response, workbook);
     }
+
 
     /**
      * 导出对象对应的excel模板
      */
-    @RequestMapping("exportTemplate3")
-    public void exportTemplate3() throws IOException {
+    @RequestMapping("export3")
+    @ResponseBody
+    public String export3() throws IOException {
         ExportParams params = new ExportParams();
         initExportParams(params);
 
         Workbook workbook = ExcelExportUtil.exportExcel(params, Bill.class, new ArrayList<>());
-        FileOutputStream fileOutputStream = new FileOutputStream("C:/Users/admin/Desktop/" + getFile().getName());
+        FileOutputStream fileOutputStream = new FileOutputStream("C:/Users/welov/Desktop/" + getFile().getName());
         ExcelUtils.downLoadExcel(fileOutputStream, workbook);
+        return "success";
     }
 
     /**
      * 以流的形式导出对象对应的excel模板（web）
      */
-    @RequestMapping("exportTemplate4")
-    public ResponseEntity<byte[]> exportTemplate4() throws IOException {
+    @RequestMapping("export4")
+    public ResponseEntity<byte[]> export4() throws IOException {
         ExportParams params = new ExportParams();
         initExportParams(params);
 
@@ -111,50 +114,44 @@ public class DefaultExcelController {
      * 导出数据和上面的一样
      */
     @RequestMapping("exportData")
-    public void exportData(HttpServletResponse response) {
+    public void exportData(HttpServletResponse response) throws IOException {
         ExportParams params = new ExportParams();
         initExportParams(params);
 
-        Workbook workbook = ExcelExportUtil.exportExcel(params, Bill.class, excelService.getBills());
-        ExcelUtils.downLoadExcel("立林小区8月份账单.xlsx", response, workbook);
+        Workbook workbook = ExcelExportUtil.exportExcel(params, Bill.class, excelService.getBillList());
+        ExcelUtils.downLoadExcel("8月份账单.xlsx", response, workbook);
     }
 
 
-    /**
-     * todo 导入校验
-     */
     @RequestMapping("import")
     @ResponseBody
-    public List<Bill> importExcel() {
-        File file = new File("C:/Users/admin/Desktop/立林小区8月份账单.xlsx");
+    public void importExcel(HttpServletResponse response) throws IOException {
+        File file = new File("C:/Users/welov/Desktop/8月份账单.xlsx");
         ImportParams importParams = new ImportParams();
         importParams.setTitleRows(1);
-        return ExcelImportUtil.importExcel(file, Bill.class, importParams);
+        //开启校验，根据实体类的hibernate校验注解
+        importParams.setNeedVerify(true);
+        ExcelImportResult<ExcelVerifyEntityOfMode> result = ExcelImportUtil.importExcelMore(file, ExcelVerifyEntityOfMode.class, importParams);
+        //导入成功的数据可以写入数据库
+        //导入失败的数据可以导出给用户（异步实现）
+        if (!result.getFailList().isEmpty()) {
+            ExcelUtils.downLoadExcel("fail.xlsx", response, result.getFailWorkbook());
+        }
     }
 
 
     /**
      * web文件上传
-     * todo 导入校验
      */
     @PostMapping("import2")
     @ResponseBody
-    public List<Bill> importExcel(@RequestParam("file") MultipartFile file) throws Exception {
+    public void importExcel(@RequestParam("file") MultipartFile file, HttpServletResponse response) throws Exception {
         ImportParams importParams = new ImportParams();
         importParams.setTitleRows(1);
-        return ExcelImportUtil.importExcel(file.getInputStream(), Bill.class, importParams);
+        importParams.setNeedVerify(true);
+        ExcelImportResult<ExcelVerifyEntityOfMode> result = ExcelImportUtil.importExcelMore(file.getInputStream(), ExcelVerifyEntityOfMode.class, importParams);
+        ExcelUtils.downLoadExcel("fail.xlsx", response, result.getFailWorkbook());
     }
 
-    /**
-     * 模拟发送http post 请求
-     */
-    @RequestMapping("http/import")
-    public void httpUpload() {
-        String url = "http://localhost:8080/default/import2";
-        File file = new File("C:/Users/admin/Desktop/立林小区8月份账单.xlsx");
-        HttpRequest request = HttpRequest.post(url)
-                .form("file", FileUtil.file(file));
-        request.executeAsync();
-    }
 
 }

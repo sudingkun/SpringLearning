@@ -2,47 +2,50 @@ package com.we.springboot.excel.handler;
 
 
 import cn.afterturn.easypoi.handler.impl.ExcelDataHandlerDefaultImpl;
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.we.springboot.excel.constants.Constants;
+import lombok.NoArgsConstructor;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** todo 添加描述
+/**
  * @author sudingkun
  */
-public class MapImportHandler extends ExcelDataHandlerDefaultImpl<Map<String, Object>> {
-    public MapImportHandler() {
-    }
+@NoArgsConstructor
+public class BillImportHandler extends ExcelDataHandlerDefaultImpl<Map<String, Object>> {
 
-    public MapImportHandler(String startColumn, String endColumn) {
+    private String startColumn = Constants.Bill.PAYMENT_DATE;
+
+    private String endColumn = Constants.Bill.TOTAL;
+
+    public BillImportHandler(String startColumn, String endColumn) {
         this.startColumn = startColumn;
         this.endColumn = endColumn;
     }
 
-    private String startColumn = Constants.Bill.PAYMENT_DATE;
-    private String endColumn = Constants.Bill.TOTAL;
-
     private static Boolean TAG = Boolean.FALSE;
 
-    private Map<String, Object> linkedHashMap = new LinkedHashMap<>();
+    private JSONObject costsValue = new JSONObject(new LinkedHashMap<>());
 
     @Override
     public void setMapValue(Map<String, Object> map, String originKey, Object value) {
+
         if (TAG) {
             if (endColumn.equals(originKey)) {
                 TAG = Boolean.FALSE;
                 map.put("total", value);
             }
-            linkedHashMap.put(originKey, value);
-            String jsonString = JSON.toJSONString(linkedHashMap);
-            originKey = Constants.COLUMN;
-            value = jsonString;
+            costsValue.put(originKey, value);
+            originKey = Constants.CUSTOM_COLUMN;
+            value = costsValue;
         }
         if (startColumn.equals(originKey)) {
             TAG = Boolean.TRUE;
+            costsValue = new JSONObject(new LinkedHashMap<>());
         }
 
+        //把excel对应的名称转换成对象对应的字段
         switch (originKey) {
             case Constants.Bill.NAME:
                 originKey = "name";
@@ -56,10 +59,8 @@ public class MapImportHandler extends ExcelDataHandlerDefaultImpl<Map<String, Ob
             case Constants.Bill.TOTAL:
                 originKey = "total";
                 break;
-            case Constants.COLUMN:
-                break;
             default:
-                throw new IllegalStateException("excel列名错误 {}" + originKey);
+                originKey = Constants.CUSTOM_COLUMN;
         }
 
         map.put(originKey, value);
