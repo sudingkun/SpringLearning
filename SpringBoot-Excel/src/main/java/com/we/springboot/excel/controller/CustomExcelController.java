@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,14 +46,17 @@ public class CustomExcelController {
 
     @RequestMapping("import")
     @ResponseBody
-    public List<Bill> importExcel() {
+    public void importExcel(HttpServletResponse response) throws UnsupportedEncodingException {
         //把下面的文件地址改成上面载文件保存地址
-        File file = new File("C:/Users/welov/Desktop/bill.xlsx");
+        File file = new File("C:/Users/admin/Desktop/bill.xlsx");
         ImportParams importParams = new ImportParams();
+        importParams.setNeedVerify(true);
         importParams.setDataHandler(new BillImportHandler());
         importParams.setVerifyHandler(new ExcelVerifyHandlerImpl());
         ExcelImportResult<Bill> result = ExcelImportUtil.importExcelMore(file, Map.class, importParams);
-        return result.getList();
+//        int insert = excelService.insert(result.getList());
+        ExcelUtils.downLoadExcel("fail.xlsx", response,result.getFailWorkbook());
+//        return result.getList();
     }
 
 }

@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import java.util.Date;
 
 /**
  * @author sudingkun
@@ -30,7 +29,7 @@ public class Bill {
     private String phone;
 
     @Excel(name = "创建时间", format = "yyyy-MM-dd", width = 20)
-    private Date paymentDate;
+    private String paymentDate;
 
     @ExcelIgnore
     private JSONObject costs;

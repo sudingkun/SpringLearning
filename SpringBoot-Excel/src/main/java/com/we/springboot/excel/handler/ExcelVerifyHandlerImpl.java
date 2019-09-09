@@ -31,6 +31,8 @@ import java.util.regex.Pattern;
 public class ExcelVerifyHandlerImpl implements IExcelVerifyHandler<Map<String, Object>> {
     private static final String PATTERN = "^(0|[1-9][0-9]*)(\\.\\d+)?$";
 
+    private static Boolean result = Boolean.FALSE;
+
     @Override
     public ExcelVerifyHandlerResult verifyHandler(Map<String, Object> obj) {
         StringBuilder failMsg = new StringBuilder();
@@ -41,8 +43,8 @@ public class ExcelVerifyHandlerImpl implements IExcelVerifyHandler<Map<String, O
             }
         }
         if (StringUtils.isBlank(failMsg)) {
-            return new ExcelVerifyHandlerResult(true, failMsg.toString());
+            result = Boolean.TRUE;
         }
-        return new ExcelVerifyHandlerResult(false, failMsg.toString());
+        return new ExcelVerifyHandlerResult(result, failMsg.toString());
     }
 }

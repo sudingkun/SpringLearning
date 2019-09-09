@@ -18,13 +18,17 @@ public class ExcelService {
 
     private final BillMapper billMapper;
 
+    public int insert(List<Bill> bills) {
+        return billMapper.insertList(bills);
+    }
+
     public List<Bill> getBillList() {
         return billMapper.selectList(null);
     }
 
 
     public Map<String, Object> getCustomBills() {
-        return process(billMapper.selectList(null));
+        return process(billMapper.getAll());
     }
 
     /**

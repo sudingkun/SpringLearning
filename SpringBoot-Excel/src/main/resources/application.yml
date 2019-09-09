@@ -15,3 +15,7 @@ mybatis-plus:
     callSettersOnNulls: true
     cache-enabled: false
   type-handlers-package: com.we.springboot.excel.handler
+
+logging:
+  level:
+    com.we.springboot.excel.dao: trace

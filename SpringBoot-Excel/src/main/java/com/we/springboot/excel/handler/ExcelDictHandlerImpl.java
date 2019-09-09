@@ -5,6 +5,7 @@ import cn.afterturn.easypoi.handler.inter.IExcelDictHandler;
 
 
 /**
+ * 用来处理对象的（map不行）
  * @author welov
  */
 public class ExcelDictHandlerImpl implements IExcelDictHandler {

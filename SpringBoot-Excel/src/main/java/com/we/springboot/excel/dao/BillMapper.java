@@ -1,5 +1,4 @@
 package com.we.springboot.excel.dao;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.we.springboot.excel.bean.Bill;
 import org.apache.ibatis.annotations.Mapper;
@@ -20,6 +19,14 @@ public interface BillMapper extends BaseMapper<Bill> {
      * @return 插入结果
      */
     int insertList(@Param("list") List<Bill> list);
+
+
+    /**
+     * 获取所有账单
+     * @return
+     */
+    List<Bill> getAll();
+
 
 
 }
