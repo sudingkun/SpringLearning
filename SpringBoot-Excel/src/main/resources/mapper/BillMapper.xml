@@ -13,12 +13,13 @@
         <result column="name" property="name"/>
         <result column="phone" property="phone"/>
         <result column="payment_date" property="paymentDate"/>
-        <result column="costs" property="costs" typeHandler="com.we.springboot.excel.handler.JsonTypeHandler"/>
+        <result column="costs" property="costs"/>
+        <!--        <result column="costs" property="costs" typeHandler="com.we.springboot.excel.handler.JsonTypeHandler"/>-->
         <result column="total" property="total"/>
     </resultMap>
 
     <insert id="insertList">
-        INSERT INTO excel_bill(
+        INSERT INTO bill(
         name,
         phone,
         payment_date,
@@ -30,17 +31,12 @@
             #{element.name},
             #{element.phone},
             #{element.paymentDate},
-            #{element.costs,typeHandler=com.we.springboot.excel.handler.JsonTypeHandler},
+            #{element.costs},
+<!--            #{element.costs,typeHandler=com.we.springboot.excel.handler.JsonTypeHandler},-->
             #{element.total}
             )
         </foreach>
     </insert>
-
-    <select id="getAll" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from excel_bill
-    </select>
 
 
 </mapper>

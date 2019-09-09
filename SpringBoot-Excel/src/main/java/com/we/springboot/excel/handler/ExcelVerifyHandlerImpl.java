@@ -31,15 +31,17 @@ import java.util.regex.Pattern;
 public class ExcelVerifyHandlerImpl implements IExcelVerifyHandler<Map<String, Object>> {
     private static final String PATTERN = "^(0|[1-9][0-9]*)(\\.\\d+)?$";
 
-    private static Boolean result = Boolean.FALSE;
 
     @Override
     public ExcelVerifyHandlerResult verifyHandler(Map<String, Object> obj) {
+        boolean result = false;
         StringBuilder failMsg = new StringBuilder();
         JSONObject costs = (JSONObject) obj.get("costs");
         for (Map.Entry<String, Object> entry : costs.entrySet()) {
-            if (!Pattern.matches(PATTERN, entry.getValue().toString())) {
-                failMsg.append(entry.getKey()).append("输入错误");
+            if (entry.getValue() != null) {
+                if (!Pattern.matches(PATTERN, entry.getValue().toString())) {
+                    failMsg.append(entry.getKey()).append("输入错误");
+                }
             }
         }
         if (StringUtils.isBlank(failMsg)) {

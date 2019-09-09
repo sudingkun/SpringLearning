@@ -6,6 +6,7 @@ import cn.afterturn.easypoi.handler.inter.IExcelDictHandler;
 
 /**
  * 用来处理对象的（map不行）
+ * 使用bean注解导入导出的时候，可以对一些数据进行翻译
  * @author welov
  */
 public class ExcelDictHandlerImpl implements IExcelDictHandler {

@@ -18,7 +18,7 @@ import javax.validation.constraints.Pattern;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("excel_bill")
+@TableName("bill")
 public class Bill {
     @Excel(name = "用户名", width = 10)
     @NotBlank

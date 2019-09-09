@@ -18,7 +18,7 @@ public class ExcelService {
 
     private final BillMapper billMapper;
 
-    public int insert(List<Bill> bills) {
+    public int insertBills(List<Bill> bills) {
         return billMapper.insertList(bills);
     }
 
@@ -28,7 +28,7 @@ public class ExcelService {
 
 
     public Map<String, Object> getCustomBills() {
-        return process(billMapper.getAll());
+        return process(billMapper.selectList(null));
     }
 
     /**

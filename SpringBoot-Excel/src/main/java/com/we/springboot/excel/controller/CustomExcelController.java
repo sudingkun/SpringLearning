@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -45,18 +44,15 @@ public class CustomExcelController {
 
 
     @RequestMapping("import")
-    @ResponseBody
     public void importExcel(HttpServletResponse response) throws UnsupportedEncodingException {
         //把下面的文件地址改成上面载文件保存地址
-        File file = new File("C:/Users/admin/Desktop/bill.xlsx");
+        File file = new File("C:/Users/welov/Desktop/bill.xlsx");
         ImportParams importParams = new ImportParams();
-        importParams.setNeedVerify(true);
         importParams.setDataHandler(new BillImportHandler());
         importParams.setVerifyHandler(new ExcelVerifyHandlerImpl());
         ExcelImportResult<Bill> result = ExcelImportUtil.importExcelMore(file, Map.class, importParams);
-//        int insert = excelService.insert(result.getList());
-        ExcelUtils.downLoadExcel("fail.xlsx", response,result.getFailWorkbook());
-//        return result.getList();
+        System.out.println(excelService.insertBills(result.getList()));
+        ExcelUtils.downLoadExcel("fail.xlsx", response, result.getFailWorkbook());
     }
 
 }

@@ -21,12 +21,4 @@ public interface BillMapper extends BaseMapper<Bill> {
     int insertList(@Param("list") List<Bill> list);
 
 
-    /**
-     * 获取所有账单
-     * @return
-     */
-    List<Bill> getAll();
-
-
-
 }
