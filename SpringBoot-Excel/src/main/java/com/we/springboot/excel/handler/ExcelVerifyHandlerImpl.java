@@ -30,23 +30,22 @@ import java.util.regex.Pattern;
  */
 public class ExcelVerifyHandlerImpl implements IExcelVerifyHandler<Map<String, Object>> {
     private static final String PATTERN = "^(0|[1-9][0-9]*)(\\.\\d+)?$";
-
+    private Integer index = 1;
 
     @Override
     public ExcelVerifyHandlerResult verifyHandler(Map<String, Object> obj) {
-        boolean result = false;
         StringBuilder failMsg = new StringBuilder();
         JSONObject costs = (JSONObject) obj.get("costs");
         for (Map.Entry<String, Object> entry : costs.entrySet()) {
             if (entry.getValue() != null) {
                 if (!Pattern.matches(PATTERN, entry.getValue().toString())) {
-                    failMsg.append(entry.getKey()).append("输入错误");
+                    failMsg.append("第 ").append(index++).append("行: ").append(entry.getKey()).append(" 输入错误; ");
                 }
             }
         }
         if (StringUtils.isBlank(failMsg)) {
-            result = Boolean.TRUE;
+            return new ExcelVerifyHandlerResult(true);
         }
-        return new ExcelVerifyHandlerResult(result, failMsg.toString());
+        return new ExcelVerifyHandlerResult(false, failMsg.toString());
     }
 }

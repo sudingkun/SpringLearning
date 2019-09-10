@@ -36,7 +36,7 @@ public class ExcelService {
      *
      * @param bills 账单原始数据
      */
-    private Map<String, Object> process(List<Bill> bills) {
+    public Map<String, Object> process(List<Bill> bills) {
         Set<Map<String, Object>> costList = new HashSet<>();
 
         for (Bill bill : bills) {
