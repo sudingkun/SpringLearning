@@ -123,10 +123,11 @@ public class ExcelController {
     }
 
 
+
     @RequestMapping("import")
     @ResponseBody
     public void importExcel(HttpServletResponse response) throws IOException {
-        File file = new File("C:/Users/welov/Desktop/8月份账单.xlsx");
+        File file = new File("C:/Users/welov/Desktop/8月份账单.xls");
         ImportParams importParams = new ImportParams();
         importParams.setTitleRows(1);
         //开启校验，根据实体类的hibernate校验注解
@@ -134,8 +135,9 @@ public class ExcelController {
         ExcelImportResult<ExcelVerifyEntityOfMode> result = ExcelImportUtil.importExcelMore(file, ExcelVerifyEntityOfMode.class, importParams);
         //导入成功的数据可以写入数据库
         //导入失败的数据可以导出给用户（异步实现）
+        //使用这样的方法直接导出，需要导入文件是xls，导出错误文件也是xls的
         if (!result.getFailList().isEmpty()) {
-            ExcelUtils.downLoadExcel("fail.xlsx", response, result.getFailWorkbook());
+            ExcelUtils.downLoadExcel("fail.xls", response, result.getFailWorkbook());
         }
     }
 

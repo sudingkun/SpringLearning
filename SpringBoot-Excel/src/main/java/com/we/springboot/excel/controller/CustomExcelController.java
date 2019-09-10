@@ -43,6 +43,10 @@ public class CustomExcelController {
     }
 
 
+    /**
+     * 通用的excel（xls，xlsx）导入校验，导出错误excel
+     * @return
+     */
     @RequestMapping("import")
     public ResponseEntity<byte[]> importExcel() throws UnsupportedEncodingException {
         File file = new File("C:/Users/admin/Desktop/bill.xlsx");
