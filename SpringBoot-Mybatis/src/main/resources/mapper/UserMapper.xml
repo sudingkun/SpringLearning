@@ -40,11 +40,11 @@
         insert into user
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="name != null">`name`,</if>
-            <if test="age != null">age,</if>
+            <if test="age != null">age</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="name != null">#{name},</if>
-            <if test="age != null">#{age},</if>
+            <if test="age != null">#{age}</if>
         </trim>
     </insert>
 
