@@ -17,10 +17,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
@@ -114,12 +111,14 @@ public class ExcelController {
      * 导出数据和上面的一样
      */
     @RequestMapping("exportData")
-    public void exportData(HttpServletResponse response) throws IOException {
+    @ResponseBody
+    public String exportData(HttpServletResponse response) throws IOException {
         ExportParams params = new ExportParams();
         initExportParams(params);
 
         Workbook workbook = ExcelExportUtil.exportExcel(params, Bill.class, excelService.getBillList());
         ExcelUtils.downLoadExcel("8月份账单.xlsx", response, workbook);
+        return "success";
     }
 
 

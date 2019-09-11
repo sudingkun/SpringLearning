@@ -45,11 +45,12 @@ public class CustomExcelController {
 
     /**
      * 通用的excel（xls，xlsx）导入校验，导出错误excel
+     *
      * @return
      */
     @RequestMapping("import")
     public ResponseEntity<byte[]> importExcel() throws UnsupportedEncodingException {
-        File file = new File("C:/Users/admin/Desktop/bill.xlsx");
+        File file = new File("C:/Users/admin/Desktop/2.xls");
         ImportParams importParams = new ImportParams();
         importParams.setDataHandler(new BillImportHandler());
         importParams.setVerifyHandler(new ExcelVerifyHandlerImpl());
