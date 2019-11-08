@@ -1,5 +1,6 @@
 package com.we.springboot.mybatis.dao;
 
+import com.we.springboot.mybatis.annotation.TableNameIntercept;
 import com.we.springboot.mybatis.bean.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -11,6 +12,7 @@ import java.util.List;
  * 使用xml方式完成crud
  */
 @Mapper
+@TableNameIntercept(tableName = "user")
 public interface UserMapper {
 
     /**
@@ -59,6 +61,7 @@ public interface UserMapper {
      * @param user 查询条件
      * @return 用户集合
      */
+    @TableNameIntercept(tableName = "user")
     List<User> getByCondition(User user);
 
     /**

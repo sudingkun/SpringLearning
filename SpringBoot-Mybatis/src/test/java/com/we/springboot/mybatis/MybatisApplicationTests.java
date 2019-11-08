@@ -3,6 +3,8 @@ package com.we.springboot.mybatis;
 import com.github.pagehelper.PageHelper;
 import com.we.springboot.mybatis.bean.User;
 import com.we.springboot.mybatis.dao.UserMapper;
+import com.we.springboot.mybatis.sql.TestSql;
+import com.we.springboot.mybatis.utils.SqlHelper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +93,16 @@ public class MybatisApplicationTests {
         User user = new User(1, "mybatisTest", 20);
         int result = userMapper.update(user);
         System.out.println(result);
+    }
+
+    @Test
+    public void testSqlHelper() {
+        TestSql testSql = new TestSql();
+        testSql.setName("tom");
+        testSql.setAge(18);
+
+        SqlHelper.setOperatorName(testSql, "test");
+        System.out.println(testSql);
     }
 
 
