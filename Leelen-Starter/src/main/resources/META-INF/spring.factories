@@ -1,2 +1,2 @@
-#org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-#com.we.springboot.starter.autoconfigure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.we.springboot.starter.autoconfigure.CategoryAutoConfigure
