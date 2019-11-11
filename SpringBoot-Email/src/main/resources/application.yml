@@ -1,0 +1,6 @@
+spring:
+  mail:
+    host: smtp.qq.com
+    username: 1149650559@qq.com
+    password: lqlwzcnejroibahc
+    from: ${spring.mail.username}
