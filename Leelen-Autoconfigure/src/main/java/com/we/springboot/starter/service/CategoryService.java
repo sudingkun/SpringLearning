@@ -8,11 +8,11 @@ import java.util.List;
 /**
  * @author admin
  */
-public interface CategoryService {
+public interface CategoryService<Category> {
     /**
      * 返回菜单树
      *
      * @return 菜单树
      */
-    List<BaseCategory> list();
+    List<Category> list();
 }

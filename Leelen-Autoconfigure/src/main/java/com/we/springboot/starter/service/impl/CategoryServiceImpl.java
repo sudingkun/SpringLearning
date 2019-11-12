@@ -16,15 +16,15 @@ import java.util.List;
  * @author admin
  */
 @Service
-public class CategoryServiceImpl implements CategoryService {
+public class CategoryServiceImpl<Category extends BaseCategory> implements CategoryService<Category> {
 
     @Resource
     private BaseCategoryMapper categoryMapper;
 
     @Override
-    public List<BaseCategory> list() {
+    public List<Category> list() {
         //获取菜单
-        List<BaseCategory> categoryList = categoryMapper.selectList(null);
+        List<Category> categoryList = categoryMapper.selectList(null);
         //构造菜单层级结构
         return buildCategoryTree(categoryList);
     }
@@ -35,14 +35,14 @@ public class CategoryServiceImpl implements CategoryService {
      *
      * @param categoryList 菜单列表
      */
-    private List<BaseCategory> buildCategoryTree(List<BaseCategory> categoryList) {
-        List<BaseCategory> parent = new ArrayList<>();
+    private List<Category> buildCategoryTree(List<Category> categoryList) {
+        List<Category> parent = new ArrayList<>();
 
-        for (BaseCategory baseCategory : categoryList) {
+        for (Category baseCategory : categoryList) {
             String categorySign = baseCategory.getCategorySign();
             String categoryParentSign = baseCategory.getCategoryParentSign();
             if (StringUtils.isEmpty(categoryParentSign)) {
-                baseCategory.setChildren(getChildren(categorySign, categoryList));
+                baseCategory.setChildren((List<BaseCategory>) getChildren(categorySign, categoryList));
                 parent.add(baseCategory);
             }
         }
@@ -57,11 +57,11 @@ public class CategoryServiceImpl implements CategoryService {
      * @param categoryList 菜单列表
      * @return 子菜单列表
      */
-    private List<BaseCategory> getChildren(String categorySign, List<BaseCategory> categoryList) {
-        List<BaseCategory> list = new ArrayList<>();
-        for (BaseCategory baseCategory : categoryList) {
+    private List<Category> getChildren(String categorySign, List<Category> categoryList) {
+        List<Category> list = new ArrayList<>();
+        for (Category baseCategory : categoryList) {
             if (categorySign.equals(baseCategory.getCategoryParentSign())) {
-                baseCategory.setChildren(getChildren(baseCategory.getCategorySign(), categoryList));
+                baseCategory.setChildren((List<BaseCategory>) getChildren(baseCategory.getCategorySign(), categoryList));
                 list.add(baseCategory);
             }
         }

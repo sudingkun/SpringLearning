@@ -1,7 +1,6 @@
 package com.we.springboot.starter.bean;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.ToString;
 
@@ -14,7 +13,6 @@ import java.util.List;
 /**
  * @author admin
  */
-@TableName("pms_category")
 @Data
 @ToString
 public class BaseCategory implements Serializable, Comparable<BaseCategory> {

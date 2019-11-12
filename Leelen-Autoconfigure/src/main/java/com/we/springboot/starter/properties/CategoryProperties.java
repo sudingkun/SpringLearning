@@ -12,8 +12,8 @@ import static com.we.springboot.starter.commons.LeelenCommons.CATEGORY_TABLE_NAM
 @ConfigurationProperties(prefix = CATEGORY_TABLE_NAME)
 public class CategoryProperties {
 
-    private Boolean enabled = false;
+    public Boolean enabled = false;
 
-    public static String categoryTableName = "category";
+    public String tableName = "category";
 
 }
