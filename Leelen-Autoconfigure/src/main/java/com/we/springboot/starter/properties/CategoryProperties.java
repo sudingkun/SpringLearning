@@ -14,6 +14,6 @@ public class CategoryProperties {
 
     private Boolean enabled = false;
 
-    private String categoryTableName = "category";
+    public static String categoryTableName = "category";
 
 }

@@ -1,8 +1,6 @@
 package com.we.springboot.starter.service.impl;
 
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.we.springboot.starter.bean.BaseCategory;
 import com.we.springboot.starter.mapper.BaseCategoryMapper;
 import com.we.springboot.starter.service.CategoryService;
@@ -25,9 +23,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<BaseCategory> list() {
-        Wrapper<BaseCategory> wrapper = new EntityWrapper<BaseCategory>().orderDesc(Collections.singletonList("sequence"));
         //获取菜单
-        List<BaseCategory> categoryList = categoryMapper.selectList(wrapper);
+        List<BaseCategory> categoryList = categoryMapper.selectList(null);
         //构造菜单层级结构
         return buildCategoryTree(categoryList);
     }

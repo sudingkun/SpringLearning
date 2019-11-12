@@ -1,7 +1,7 @@
 package com.we.springboot.starter.bean;
 
-import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.ToString;
 
@@ -10,13 +10,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.we.springboot.starter.commons.LeelenCommons.CATEGORY_TABLE_NAME;
-
 
 /**
  * @author admin
  */
-@TableName(CATEGORY_TABLE_NAME)
+@TableName("pms_category")
 @Data
 @ToString
 public class BaseCategory implements Serializable, Comparable<BaseCategory> {

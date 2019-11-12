@@ -18,7 +18,7 @@ import static com.we.springboot.starter.commons.LeelenCommons.*;
 public class CategoryAutoConfigure {
 
     @Bean
-    public CategoryService categoryService(){
+    public CategoryService categoryService() {
         return new CategoryServiceImpl();
     }
 }
