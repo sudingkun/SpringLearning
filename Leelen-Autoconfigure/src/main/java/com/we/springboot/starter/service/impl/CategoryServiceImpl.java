@@ -2,12 +2,12 @@ package com.we.springboot.starter.service.impl;
 
 
 import com.we.springboot.starter.bean.BaseCategory;
-import com.we.springboot.starter.mapper.BaseCategoryMapper;
+import com.we.springboot.starter.mapper.BaseCategoryRepository;
 import com.we.springboot.starter.service.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,13 +18,13 @@ import java.util.List;
 @Service
 public class CategoryServiceImpl<Category extends BaseCategory> implements CategoryService<Category> {
 
-    @Resource
-    private BaseCategoryMapper categoryMapper;
+    @Autowired
+    private BaseCategoryRepository<Category> categoryMapper;
 
     @Override
     public List<Category> list() {
         //获取菜单
-        List<Category> categoryList = categoryMapper.selectList(null);
+        List<Category> categoryList = categoryMapper.findAll();
         //构造菜单层级结构
         return buildCategoryTree(categoryList);
     }
@@ -42,7 +42,7 @@ public class CategoryServiceImpl<Category extends BaseCategory> implements Categ
             String categorySign = baseCategory.getCategorySign();
             String categoryParentSign = baseCategory.getCategoryParentSign();
             if (StringUtils.isEmpty(categoryParentSign)) {
-                baseCategory.setChildren((List<BaseCategory>) getChildren(categorySign, categoryList));
+                baseCategory.setChildren(getChildren(categorySign, categoryList));
                 parent.add(baseCategory);
             }
         }
@@ -61,13 +61,12 @@ public class CategoryServiceImpl<Category extends BaseCategory> implements Categ
         List<Category> list = new ArrayList<>();
         for (Category baseCategory : categoryList) {
             if (categorySign.equals(baseCategory.getCategoryParentSign())) {
-                baseCategory.setChildren((List<BaseCategory>) getChildren(baseCategory.getCategorySign(), categoryList));
+                baseCategory.setChildren(getChildren(baseCategory.getCategorySign(), categoryList));
                 list.add(baseCategory);
             }
         }
         Collections.sort(list);
         return list;
-
     }
 
 
