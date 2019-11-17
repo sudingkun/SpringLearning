@@ -4,10 +4,9 @@ package com.we.springboot.starter.service.impl;
 import com.we.springboot.starter.bean.BaseCategory;
 import com.we.springboot.starter.mapper.BaseCategoryRepository;
 import com.we.springboot.starter.service.CategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,10 +14,9 @@ import java.util.List;
 /**
  * @author admin
  */
-@Service
 public class CategoryServiceImpl<Category extends BaseCategory> implements CategoryService<Category> {
 
-    @Autowired
+    @Resource
     private BaseCategoryRepository<Category> categoryMapper;
 
     @Override
