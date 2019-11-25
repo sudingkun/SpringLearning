@@ -1,9 +1,9 @@
 package com.we.springboot.starter.bean;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import lombok.ToString;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,10 +15,13 @@ import java.util.List;
  */
 @Data
 @ToString
+@MappedSuperclass
 public class BaseCategory implements Serializable, Comparable<BaseCategory> {
 
     private static final long serialVersionUID = -7662805959061292342L;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
@@ -101,8 +104,8 @@ public class BaseCategory implements Serializable, Comparable<BaseCategory> {
      */
     private Date updateTime;
 
-    @TableField(exist = false)
-    private List<BaseCategory> children = new ArrayList<>();
+    @Transient
+    private List<? extends BaseCategory> children = new ArrayList<>();
 
     @Override
     public int compareTo(BaseCategory o) {

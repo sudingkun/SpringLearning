@@ -1,12 +1,10 @@
 package com.we.springboot.starter.service;
 
 
-import com.we.springboot.starter.bean.BaseCategory;
-
 import java.util.List;
 
 /**
- * @author admin
+ * @author we
  */
 public interface CategoryService<Category> {
     /**

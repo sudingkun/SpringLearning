@@ -8,6 +8,6 @@ public interface LeelenCommons {
 
     String ENABLED = "enabled";
 
-    String CATEGORY_TABLE_NAME = "leelen.category";
+    String CATEGORY = "leelen.category";
 
 }
