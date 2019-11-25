@@ -81,8 +81,7 @@ public class ShiroConfig {
      * 2、使用注解方式@RequiresRoles(value = {"admin"})。则设置shiroFilterFactoryBean.setUnauthorizedUrl("/unauthorized");无效
      *
      * @see <a href="https://www.jianshu.com/p/e03f5b54838c">无效原因</a>
-     * 解决方法：
-     * 1、配置 {@link ShiroConfig#simpleMappingExceptionResolver()}
+     * 解决方法：     * 1、配置 {@link ShiroConfig#simpleMappingExceptionResolver()}
      * 2、设置一个全局异常处理器
      */
     @Bean

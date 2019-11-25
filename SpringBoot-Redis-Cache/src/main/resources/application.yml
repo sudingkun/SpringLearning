@@ -15,8 +15,8 @@ spring:
     jedis:
       pool:
         min-idle: 0
-        max-idle: 8
-        max-active: 8
+        max-idle: 7
+        max-active: 7
         max-wait: -1
         time-between-eviction-runs: 6000
     timeout: 10000
