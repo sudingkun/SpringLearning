@@ -1,0 +1,15 @@
+mqtt:
+  host-url: tcp://sudk.top:1883
+  username: root
+  password: 123456
+  keep-alive: 120
+  completion-timeout: 3000
+  producer:
+    client-id: producer
+    default-topic: topic
+  consumer:
+    client-id: consumer
+    default-topic:
+      - topic
+      - topic2
+      - topic3
