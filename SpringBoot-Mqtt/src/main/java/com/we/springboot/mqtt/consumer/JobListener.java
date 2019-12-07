@@ -15,12 +15,12 @@ public class JobListener {
     @EventListener
     public void receive(MqttEvent mqttEvent) {
         System.out.println(mqttEvent);
-        log.info("接到消息：" + mqttEvent.getMessage());
+        log.info("接到消息1：" + mqttEvent.getMessage());
     }
 
     @EventListener(condition = "@mqttPredicate.test(#mqttEvent)")
     public void receive2(MqttEvent mqttEvent) {
-        log.info("接到消息：" + mqttEvent.getMessage());
+        log.info("接到消息2：" + mqttEvent.getMessage());
     }
 
 

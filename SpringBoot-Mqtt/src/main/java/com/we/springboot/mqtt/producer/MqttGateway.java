@@ -7,7 +7,7 @@ import org.springframework.messaging.handler.annotation.Header;
 
 
 /**
- * @author sudingkun
+ * @author we
  */
 @MessagingGateway(defaultRequestChannel = "mqttOutboundChannel")
 public interface MqttGateway {
