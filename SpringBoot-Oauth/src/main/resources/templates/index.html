@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>we</title>
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" />
+  <script th:src="@{/webjars/jquery/3.1.1/jquery.min.js}"></script>
+  <script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+</head>
+<script th:inline="javascript">
+  const weChat = "micromessenger";
+  const alipay = "alipayclient";
+  $(function () {
+    const userAgent = navigator.userAgent.toLowerCase();
+    if (userAgent.indexOf(weChat) > 0) {
+            location.href = "/oauth/login/weChat_Mp";
+            return ;
+        }
+        if (userAgent.indexOf(alipay) > 0) {
+            location.href = "/oauth/login/alipay";
+            return ;
+        }
+        alert("请使用微信或支付宝扫码");
+
+    })
+
+</script>
+<body>
+
+</body>
+</html>
