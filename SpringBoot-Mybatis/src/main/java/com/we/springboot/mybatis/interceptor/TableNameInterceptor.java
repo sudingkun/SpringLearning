@@ -2,7 +2,6 @@ package com.we.springboot.mybatis.interceptor;
 
 
 import com.we.springboot.mybatis.annotation.TableNameIntercept;
-import com.we.springboot.mybatis.dao.UserMapper;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -22,10 +21,13 @@ import java.util.Properties;
 
 /**
  * 自定义拦截器：分表的时候用来替换表名
- * todo 现在编写的拦截器在使用pageHelper分页时，会失效（会先去查找数量再去执行对应的sql）。目前用在mapper类上加上@TableNameIntercept这个暂时解决
- * @see UserMapper#getByCondition(com.we.springboot.mybatis.bean.User)
+ * 现在编写的拦截器在使用pageHelper分页时，会失效（会先去查找数量再去执行对应的sql）。目前用在mapper类上加上@TableNameIntercept这个暂时解决
+ * 这个写的不好，使用下面的动态表名解析器
+ * (https://gitee.com/baomidou/mybatis-plus-samples/tree/master/mybatis-plus-sample-dynamic-tablename)
+ *
  * @author we
  */
+@Deprecated
 @Component
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class TableNameInterceptor implements Interceptor {

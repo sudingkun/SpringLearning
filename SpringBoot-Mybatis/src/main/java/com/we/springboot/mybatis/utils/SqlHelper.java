@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 
 /**
+ *  fixme 这个写的有问题
  * 插入数据库的po参数太少，经常需要从请求中获取再set进去
  * <p>
  * 创建的dto名称和po相同，前端需要不同的名称使用@JsonProperty 结合
@@ -62,7 +63,7 @@ public class SqlHelper {
      * @param o 插入数据库实体类
      */
     private static void processObject(Object o) {
-        Class cls = baseSql.getClass();
+        Class<?> cls = baseSql.getClass();
         Class<?> aClass = o.getClass();
         Field[] declaredFields = cls.getDeclaredFields();
         Field[] fields = aClass.getFields();
