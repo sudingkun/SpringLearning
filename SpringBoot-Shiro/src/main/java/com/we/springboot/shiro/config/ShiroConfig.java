@@ -108,6 +108,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/login", "anon");
         filterChainDefinitionMap.put("/kickout", "anon");
         //filterChainDefinitionMap.put("/**", "authc"); 设置了remember 就改成下面的
+        //设置 /** 路径下的请求经过 user、kickout 拦截器
         filterChainDefinitionMap.put("/**", "user,kickout");
 
         // 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
@@ -130,7 +131,7 @@ public class ShiroConfig {
         KickoutSessionControlFilter kickoutSessionControlFilter = new KickoutSessionControlFilter();
         kickoutSessionControlFilter.setCacheManager(cacheManager());
         kickoutSessionControlFilter.setSessionManager(sessionManager());
-        kickoutSessionControlFilter.setKickoutAfter(true);
+        kickoutSessionControlFilter.setKickoutAfter(false);
         kickoutSessionControlFilter.setMaxSession(1);
         kickoutSessionControlFilter.setKickoutUrl("kickout");
         return kickoutSessionControlFilter;
